@@ -1,0 +1,52 @@
+<configs>
+	<config name="blocks">
+		<append xpath="/blocks">
+			<block id="2042" name="LogicGate">
+				<property name="Class" value="LogicGate, Mods" />
+				<property name="CustomIconTint" value="EEEE00" />
+				<property name="Shape" value="Ext3dModel" />
+				<property name="Texture" value="293" />
+				<property name="Mesh" value="models" />				
+				<property name="Extends" value="electricwirerelay" />
+				<property name="Model" value="Industrial/control_panel_base_08" param1="main_mesh" />
+				<property name="CustomIcon" value="controlPanelBase08" />
+				<property name="StabilitySupport" value="true" />
+				<property name="ImposterDontBlock" value="true" />
+				<property name="Group" value="Science" />
+				<property name="RequiredPower" value="2" />			
+				<property class="RepairItems">
+					<property name="forgedIron" value="1" />
+				</property>
+				<drop event="Harvest" name="electricParts" count="1" prob="0.2" tool_category="Disassemble" />
+				<drop event="Destroy" name="scrapIron" count="1,5" prob="1" />
+				<drop event="Fall" name="scrapMetalPile" count="1" prob="0.75" stick_chance="1" />
+				<property name="Stacknumber" value="250" />
+				<property name="TakeDelay" value="5" />
+				<property name="EconomicValue" value="48" />
+			</block>
+			<block id="2043" name="logicGateInput">
+				<property name="Class" value="Powered" />
+				<property name="Extends" value="electricwirerelay" />
+				<property name="RequiredPower" value="1" />			
+				<property name="CustomIcon" value="electricwirerelay" />
+				<!-- <property name="CustomIconTint" value="00EE00" />  -->
+			</block>
+			<block id="2044" name="logicGateOutput">
+				<property name="Class" value="Powered" />
+				<property name="CustomIcon" value="electricwirerelay" />
+				<property name="Extends" value="electricwirerelay" />
+				<property name="RequiredPower" value="1" />			
+				<property name="CustomIconTint" value="EE0000" />
+			</block>
+
+		</append>
+	</config>
+	<config name="recipes">
+		<append xpath="/recipes">
+			<recipe name="logicGateInput" count="1" craft_area="workbench">
+				<ingredient name="forgedIron" count="2"/>
+				<ingredient name="electricParts" count="2"/>
+			</recipe>
+		</append>
+	</config>
+</configs>
