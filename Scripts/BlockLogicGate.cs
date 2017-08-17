@@ -6,11 +6,29 @@ using System.IO;
 
 public class BlockLogicGate : BlockPowered
 {
-    // get called at Gamestartup
+	private bool showDebugLog = true;
+
+	public void DebugMsg(string msg)
+	{
+		if(showDebugLog)
+		{
+			Debug.Log(msg);
+		}
+	}
+    
+    // get called at Gamestartup (main menu)
     public override void Init()
 	{
 		base.Init();        
-		Debug.Log("BlockLogicGate.init");
+		DebugMsg("BlockLogicGate.init");
+	}
+    
+    // called right after init()
+    // Block
+    public override void LateInit()
+	{    
+		DebugMsg("BlockLogicGate.LateInit");
+        base.LateInit();
 	}
     
 	// get called on first wire hookup  
@@ -32,42 +50,43 @@ public class BlockLogicGate : BlockPowered
 	}
 	*/
     
-    // Gets Called on lc pickup or on destroy/fall
-	// BlockPowered
-	public override void OnBlockRemoved(WorldBase world, Chunk _chunk, Vector3i _blockPos, BlockValue _blockValue)
-	{
-		DebugMsg("BlockLogicGate.onBlockRemoved");
-		base.OnBlockRemoved(world, _chunk, _blockPos, _blockValue);
-	}
-    
     // don't get called
     public override void OnBlockLoaded(WorldBase _world, int _clrIdx, Vector3i _blockPos, BlockValue _blockValue)
 	{
 		base.OnBlockLoaded(_world, _clrIdx, _blockPos, _blockValue);        
 		DebugMsg("BlockLogicGate.onBlockLoaded");
 	}  
-	    
-	public override TileEntityPowered CreateTileEntity(Chunk chunk)
+    
+
+    // block
+   	public override void OnBlockPlaceBefore(WorldBase _world, ref BlockPlacement.Result _bpResult, EntityAlive _ea, System.Random _rnd)
 	{
-		Debug.Log("BlockLogicGate.CreateTileEntity");
-        return new TileEntityPoweredBlock(chunk)
-		{
-			PowerItemType = PowerItem.PowerItemTypes.Consumer
-        };
+		DebugMsg("BlockLogicGate.OnBlockPlaceBefore");
+		base.OnBlockPlaceBefore(_world, ref _bpResult, _ea, _rnd);
+    }   
+   
+   
+    // called on Block Placement
+    // Block
+    public virtual void PlaceBlock(WorldBase _world, ref BlockPlacement.Result _result, EntityAlive _ea)
+	{
+		DebugMsg("BlockLogicGate.PlaceBlock");
+        base.PlaceBlock(_world, _result, _ea);
 	}
-    // called on block placement
+  
+    // called after Block was added
     // Block
     public override void OnBlockAdded(WorldBase _world, Chunk _chunk, Vector3i _blockPos, BlockValue _blockValue)
 	{
-		Debug.Log("BlockLogicGate.OnBlockAdded");
+		DebugMsg("BlockLogicGate.OnBlockAdded");
         base.OnBlockAdded( _world, _chunk, _blockPos, _blockValue);
 	}
-    
+        
     // called if a neighbor block gets added, removed (TODO: does this execute on changes like inventory of chests, etc?)
     // Block
     public override void OnNeighborBlockChange(WorldBase world, int _clrIdx, Vector3i _myBlockPos, BlockValue _myBlockValue, Vector3i _blockPosThatChanged, BlockValue _newNeighborBlockValue, BlockValue _oldNeighborBlockValue)
 	{
-		Debug.Log("BlockLogicGate.OnNeighborBlockChange");
+		DebugMsg("BlockLogicGate.OnNeighborBlockChange");
         base.OnNeighborBlockChange(world,_clrIdx, _myBlockPos, _myBlockValue, _blockPosThatChanged, _newNeighborBlockValue, _oldNeighborBlockValue);
 	}
     
@@ -75,76 +94,78 @@ public class BlockLogicGate : BlockPowered
     // block
     public override void OnBlockValueChanged(WorldBase _world, int _clrIdx, Vector3i _blockPos, BlockValue _oldBlockValue, BlockValue _newBlockValue)
 	{    
-		Debug.Log("BlockLogicGate.OnBlockValueChanged");
+		DebugMsg("BlockLogicGate.OnBlockValueChanged");
 		base.OnBlockValueChanged(_world, _clrIdx, _blockPos, _oldBlockValue, _newBlockValue);
 	}
-    
-   /*
-    public override void OnBlockEntityTransformAfterActivated(WorldBase _world, Vector3i _blockPos, int _cIdx, BlockValue _blockValue, BlockEntityData _ebcd)
-	{
-		base.OnBlockEntityTransformAfterActivated(_world, _blockPos, _cIdx, _blockValue, _ebcd);        
-		Debug.Log("BlockLogicGate.OnBlockEntityTransformAfterActivated");
-		if (_blockValue.ischild)
-		{
-			while (true)
-			{
-				switch (5)
-				{
-				case 0:
-					continue;
-				}
-				break;
-			}
-			if (!true)
-			{
-                // trows Compiler Error CS1525
-				//RuntimeMethodHandle arg_2A_0 = methodof(BlockPowered.OnBlockEntityTransformAfterActivated(WorldBase, Vector3i, int, BlockValue, BlockEntityData)).MethodHandle;
-			}
-			return;
-		}
+   
 
-		TileEntityPowered tileEntityPowered = (TileEntityPowered)_world.GetTileEntity(_cIdx, _blockPos);
+   
+   
+    //
+    // Block
+    public virtual bool UpdateTick(WorldBase _world, int _clrIdx, Vector3i _blockPos, BlockValue _blockValue, bool _bRandomTick, ulong _ticksIfLoaded, System.Random _rnd)
+	{
+		DebugMsg("BlockLogicGate.UpdateTick");
+		return false;
+	}
+    
+    // Gets Called on lc pickup or on destroy/fall
+ 	// BlockPowered
+ 	public override void OnBlockRemoved(WorldBase world, Chunk _chunk, Vector3i _blockPos, BlockValue _blockValue)
+ 	{
+ 		DebugMsg("BlockLogicGate.onBlockRemoved");
+        TileEntityPowered tileEntityPowered = _chunk.GetTileEntity(World.toBlock(_blockPos)) as TileEntityPowered;
 		if (tileEntityPowered != null)
 		{
-			tileEntityPowered.BlockTransform = _ebcd.transform;
-			GameManager.Instance.StartCoroutine(this.OE(tileEntityPowered));
 			if (tileEntityPowered.GetParent().y != -9999)
 			{
-				while (true)
-				{
-					switch (3)
-					{
-					case 0:
-						continue;
-					}
-					break;
-				}
-				IPowered powered = _world.GetTileEntity(0, tileEntityPowered.GetParent()) as IPowered;
+				IPowered powered = world.GetTileEntity(0, tileEntityPowered.GetParent()) as IPowered;
 				if (powered != null)
 				{
-					GameManager.Instance.StartCoroutine(this.OE(powered));
+                    DebugMsg("BlockLogicGate.OnBlockRemoved - powered != null"); 
 				}
 			}
 		}
+ 		base.OnBlockRemoved(world, _chunk, _blockPos, _blockValue);
+ 	}
 
-	}
-    
- 
-    // throws error CS0305 
     // BlockPowered
-    private IEnumerator OE(IPowered powered)
-	{
-		BlockPowered.DT dT = new BlockPowered.DT();
-		dT.BU = powered;
-		dT.AU = powered;
-		return dT;
-	}
-
 	public override void OnBlockEntityTransformBeforeActivated(WorldBase _world, Vector3i _blockPos, int _cIdx, BlockValue _blockValue, BlockEntityData _ebcd)
 	{
 		this.shape.OnBlockEntityTransformBeforeActivated(_world, _blockPos, _cIdx, _blockValue, _ebcd);
 		GameObject gameObject = _ebcd.transform.gameObject;
-		LogicGates script = gameObject.GetComponent<LogicGates>();
+
+		DebugMsg("BlockLogicGate.OnBlockEntityTransformBeforeActivated");        
+		base.OnBlockEntityTransformBeforeActivated(_world, _blockPos, _cIdx, _blockValue, _ebcd);
+	}
+    
+   // BlockPowered
+    public override void OnBlockEntityTransformAfterActivated(WorldBase _world, Vector3i _blockPos, int _cIdx, BlockValue _blockValue, BlockEntityData _ebcd)
+	{
+        DebugMsg("BlockLogicGate.OnBlockEntityTransformAfterActivated");    
+		TileEntityPowered tileEntityPowered = (TileEntityPowered)_world.GetTileEntity(_cIdx, _blockPos);
+		if (tileEntityPowered != null)
+		{
+			if (tileEntityPowered.GetParent().y != -9999)
+			{
+				IPowered powered = _world.GetTileEntity(0, tileEntityPowered.GetParent()) as IPowered;
+				if (powered != null)
+				{
+                    DebugMsg("BlockLogicGate.OnBlockEntityTransformAfterActivated - powered != null"); 
+				}
+			}
+		}
+		base.OnBlockEntityTransformAfterActivated(_world, _blockPos, _cIdx, _blockValue, _ebcd);
+	}
+    
+    //
+    public override void DoExchangeAction(WorldBase _world, Vector3i _blockPos, BlockValue _blockValue, string _action, int _itemCount)
+	{        
+        DebugMsg("BlockLogicGate.DoExchangeAction"); 
+	}
+    
+  /*
+        LogicGates script = gameObject.GetComponent<LogicGates>();
 		if(script == null)
 		{
 			script = gameObject.AddComponent<LogicGates>();
@@ -153,7 +174,5 @@ public class BlockLogicGate : BlockPowered
 		script.blockPos = _blockPos;
 		script.cIdx = _cIdx;
 		script.ebcd = _ebcd;
-		Debug.Log("BlockLogicGate.OnBlockEntityTransformBeforeActivated");
-	}	
    */
 }
