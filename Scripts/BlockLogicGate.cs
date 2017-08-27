@@ -1,222 +1,182 @@
 using System;
 using UnityEngine;
-using System.Collections.Generic;
-using System.IO;
-
 
 public class BlockLogicGate : BlockPowered
 {
-	private bool showDebugLog = true;
-
-	public void DebugMsg(string msg)
+	static bool showDebugLog = true;	
+	
+	private static bool IsSpRemotePowerAllowed(Vector3i _blockPos)
+	{
+		BlockValue blockValue = GameManager.Instance.World.GetBlock(_blockPos);
+		Block block = Block.list[blockValue.type];
+		bool isSpRemotePowerAllowed = false;
+		if (block.Properties.Values.ContainsKey("AllowRemotePower"))
+        {
+			bool.TryParse(block.Properties.Values["AllowRemotePower"], out isSpRemotePowerAllowed);
+        }
+		return isSpRemotePowerAllowed;
+	}
+	
+	public string LitObject()
+	{
+		string litObjectName = @"DefaultLitObjectName";
+		if (this.Properties.Values.ContainsKey("LightObject"))
+		{
+			litObjectName = this.Properties.Values["LightObject"].Replace(@"DefaultLitObjectName", @"DefaultLitObjectName");
+		}
+		else
+		litObjectName = "LitObjects";
+		return litObjectName;
+	}
+	
+	public static void DebugMsg(string msg)
 	{
 		if(showDebugLog)
 		{
 			Debug.Log(msg);
 		}
 	}
-    
-    // get called at Gamestartup (main menu)
-    public override void Init()
-	{
-		base.Init();        
-		DebugMsg("BlockLogicGate.init");
-	}
-				
-    // called right after init()
-    // Block
-    public override void LateInit()
-	{    
-		DebugMsg("BlockLogicGate.LateInit");
-        base.LateInit();
-	}
-    
-	// get called on first wire hookup  
-    // doesn't care if wire is powered (even from a switch without powersource)
-	// BlockPowered
-	public override TileEntityPowered CreateTileEntity(Chunk chunk)
-	{
-		DebugMsg("BlockLogicGate.CreateTileEntity");
-		return new TileEntityPoweredBlock(chunk);
-	}
-	/*
-	public override TileEntityPowered CreateTileEntity(Chunk chunk)
-	{
-		DebugMsg("BlockLogicGate.CreateTileEntity");
-	    return new TileEntityPoweredBlock(chunk)
-		{
-			PowerItemType = PowerItem.PowerItemTypes.Consumer
-        };
-	}
-	*/
-    
-    // don't get called
-	// BlockPowered
-    public override void OnBlockLoaded(WorldBase _world, int _clrIdx, Vector3i _blockPos, BlockValue _blockValue)
-	{
-		DebugMsg("BlockLogicGate.onBlockLoaded");
-		base.OnBlockLoaded(_world, _clrIdx, _blockPos, _blockValue);        
-	}  
-    
-
-    // block
-   	public override void OnBlockPlaceBefore(WorldBase _world, ref BlockPlacement.Result _bpResult, EntityAlive _ea, System.Random _rnd)
-	{
-		DebugMsg("BlockLogicGate.OnBlockPlaceBefore");
-		base.OnBlockPlaceBefore(_world, ref _bpResult, _ea, _rnd);
-    }   
-   
-   
-    // called on Block Placement
-    // Block
-    public virtual void PlaceBlock(WorldBase _world, ref BlockPlacement.Result _result, EntityAlive _ea)
-	{
-		DebugMsg("BlockLogicGate.PlaceBlock");
-        base.PlaceBlock(_world, _result, _ea);
-	}
-
-    // called after Block was added
-    // Block
-    public override void OnBlockAdded(WorldBase _world, Chunk _chunk, Vector3i _blockPos, BlockValue _blockValue)
-	{
-		DebugMsg("BlockLogicGate.OnBlockAdded");
-        base.OnBlockAdded( _world, _chunk, _blockPos, _blockValue);
-	}
 	
-  /*
-	// blockPressurePlate
-	public override void OnBlockAdded(WorldBase _world, Chunk _chunk, Vector3i _blockPos, BlockValue _blockValue)
+	public override bool OnBlockActivated(WorldBase _world, int _clrIdx, Vector3i _blockPos, BlockValue _blockValue, EntityAlive _player)
 	{
-		base.OnBlockAdded(_world, _chunk, _blockPos, _blockValue);
-		if (_blockValue.ischild)
-		{
-			return;
-		}
-		if (!(_world.GetTileEntity(_chunk.ClrIdx, _blockPos) is TileEntityPoweredTrigger))
-		{
-			TileEntityPowered tileEntityPowered = this.CreateTileEntity(_chunk);
-			tileEntityPowered.localChunkPos = World.toBlock(_blockPos);
-			tileEntityPowered.InitializePowerData();
-			_chunk.AddTileEntity(tileEntityPowered);
-		}
-	}
-   */    
-   
-    // called if a neighbor block gets added, removed (TODO: does this execute on changes like inventory of chests, etc?)
-    // Block
-    public override void OnNeighborBlockChange(WorldBase world, int _clrIdx, Vector3i _myBlockPos, BlockValue _myBlockValue, Vector3i _blockPosThatChanged, BlockValue _newNeighborBlockValue, BlockValue _oldNeighborBlockValue)
-	{
-		DebugMsg("BlockLogicGate.OnNeighborBlockChange");
-        base.OnNeighborBlockChange(world,_clrIdx, _myBlockPos, _myBlockValue, _blockPosThatChanged, _newNeighborBlockValue, _oldNeighborBlockValue);
-	}
-    
-    // connecting or disconnecting does not fire this :( keep on searching...
-    // block
-    public override void OnBlockValueChanged(WorldBase _world, int _clrIdx, Vector3i _blockPos, BlockValue _oldBlockValue, BlockValue _newBlockValue)
-	{    
-		DebugMsg("BlockLogicGate.OnBlockValueChanged");
-		base.OnBlockValueChanged(_world, _clrIdx, _blockPos, _oldBlockValue, _newBlockValue);
-	}
-   
-
-   
-   
-    //
-    // Block
-    public virtual bool UpdateTick(WorldBase _world, int _clrIdx, Vector3i _blockPos, BlockValue _blockValue, bool _bRandomTick, ulong _ticksIfLoaded, System.Random _rnd)
-	{
-		DebugMsg("BlockLogicGate.UpdateTick");
-		return false;
-	}
-    
-    // Gets Called on LandClaimPickup or on destroy/fall
- 	// BlockPowered
- 	public override void OnBlockRemoved(WorldBase world, Chunk _chunk, Vector3i _blockPos, BlockValue _blockValue)
- 	{
- 		DebugMsg("BlockLogicGate.onBlockRemoved");
-        TileEntityPowered tileEntityPowered = _chunk.GetTileEntity(World.toBlock(_blockPos)) as TileEntityPowered;
-		if (tileEntityPowered != null)
-		{
-			if (tileEntityPowered.GetParent().y != -9999)
-			{
-				IPowered powered = world.GetTileEntity(0, tileEntityPowered.GetParent()) as IPowered;
-				if (powered != null)
-				{
-                    DebugMsg("BlockLogicGate.OnBlockRemoved - powered != null"); 
-				}
-			}
-		}
- 		base.OnBlockRemoved(world, _chunk, _blockPos, _blockValue);
- 	}
-
-    // BlockPowered
-	public override void OnBlockEntityTransformBeforeActivated(WorldBase _world, Vector3i _blockPos, int _cIdx, BlockValue _blockValue, BlockEntityData _ebcd)
-	{
-		DebugMsg("BlockLogicGate.OnBlockEntityTransformBeforeActivated");        
-		base.OnBlockEntityTransformBeforeActivated(_world, _blockPos, _cIdx, _blockValue, _ebcd);
-	}
-    
-   // BlockPowered
-    public override void OnBlockEntityTransformAfterActivated(WorldBase _world, Vector3i _blockPos, int _cIdx, BlockValue _blockValue, BlockEntityData _ebcd)
-	{
-        DebugMsg("BlockLogicGate.OnBlockEntityTransformAfterActivated");    
-		TileEntityPowered tileEntityPowered = (TileEntityPowered)_world.GetTileEntity(_cIdx, _blockPos);
-		if (tileEntityPowered != null)
-		{
-			if (tileEntityPowered.GetParent().y != -9999)
-			{
-				IPowered powered = _world.GetTileEntity(0, tileEntityPowered.GetParent()) as IPowered;
-				if (powered != null)
-				{
-                    DebugMsg("BlockLogicGate.OnBlockEntityTransformAfterActivated - powered != null"); 
-				}
-			}
-		}
-		base.OnBlockEntityTransformAfterActivated(_world, _blockPos, _cIdx, _blockValue, _ebcd);
-	}
-    
-    //
-    public override void DoExchangeAction(WorldBase _world, Vector3i _blockPos, BlockValue _blockValue, string _action, int _itemCount)
-	{        
-        DebugMsg("BlockLogicGate.DoExchangeAction"); 
-	}
-  
-  /*  
-	// called when Entity (player, z, etc.) Collide with Block 
-	// BlockPressurePlate
-	public override bool OnEntityCollidedWithBlock(WorldBase _world, int _clrIdx, Vector3i _blockPos, BlockValue _blockValue, Entity _targetEntity)
-	{
-        DebugMsg("BlockLogicGate.OnEntityCollidedWithBlock"); 
-		
-		if (!(_targetEntity is EntityAlive))
+		bool flag = _world.IsMyLandProtectedBlock(_blockPos, _world.GetGameManager().GetPersistentLocalPlayer());
+		if(!flag)
 		{
 			return false;
 		}
-		EntityAlive entityAlive = (EntityAlive)_targetEntity;
-		if (entityAlive.IsDead())
-		{
-			return false;
-		}
-		if (this.isMultiBlock && _blockValue.ischild)
-		{
-			Vector3i parentPos = this.multiBlockPos.GetParentPos(_blockPos, _blockValue);
-			_blockValue = _world.GetBlock(parentPos);
-		}
-		_blockValue.meta = (byte)(((int)_blockValue.meta & -3) | 2);
-		_world.SetBlockRPC(_clrIdx, _blockPos, _blockValue);
+		this.TakeItemWithTimer(_clrIdx, _blockPos, _blockValue, _player);
 		return true;
 	}
-  */
 	
-  /*
-        LogicGates script = gameObject.GetComponent<LogicGates>();
-		if(script == null)
+	public override void OnBlockEntityTransformBeforeActivated(WorldBase _world, Vector3i _blockPos, int _cIdx, BlockValue _blockValue, BlockEntityData _ebcd)
+	{
+		this.shape.OnBlockEntityTransformBeforeActivated(_world, _blockPos, _cIdx, _blockValue, _ebcd);
+		DebugMsg("OnBlockEntityTransformBeforeActivated");
+		if(_ebcd != null && _ebcd.bHasTransform)
 		{
-			script = gameObject.AddComponent<LogicGates>();
+			GameObject gameObject = _ebcd.transform.gameObject;
+			GameObject litSignObject = _ebcd.transform.Find("Indicators").gameObject;
+			if(litSignObject == null)
+			{
+				DebugMsg("litSignObject is null");
+			}
+			else
+			DebugMsg("Found litSignObject");
+			LogicGateController neonSignScript = gameObject.GetComponent<LogicGateController>();
+			if(neonSignScript == null)
+			{
+				neonSignScript = gameObject.AddComponent<LogicGateController>();
+			}
+			neonSignScript.enabled = true;
+			neonSignScript.cIdx = _cIdx;
+			neonSignScript.blockPos = _blockPos;
+			neonSignScript.litSignObject = litSignObject;
+			neonSignScript.litSignObject.active = false;
 		}
-		script.enabled = true;
-		script.blockPos = _blockPos;
-		script.cIdx = _cIdx;
-		script.ebcd = _ebcd;
-   */
+		else
+		DebugMsg("ERROR: _ebcd null (OnBlockEntityTransformBeforeActivated)");
+	}
+	
+	public static bool isBlockPoweredUp(Vector3i _blockPos, int _clrIdx)
+	{
+		WorldBase world = GameManager.Instance.World;
+		if(world.IsRemote())
+		{
+			//Use HasActivePower power instead since directly powering blocks doesnt work on servers.
+			return BlockLogicGate.HasActivePower(world, _clrIdx, _blockPos);
+		}
+		TileEntityPowered tileEntityPowered = (TileEntityPowered)GameManager.Instance.World.GetTileEntity(_clrIdx, _blockPos);
+		if (tileEntityPowered != null)
+		{
+			if(tileEntityPowered.IsPowered)
+			{
+				//DebugMsg("Block Power Is On");
+				return true;
+			}
+		}
+		if(BlockLogicGate.IsSpRemotePowerAllowed(_blockPos))
+		{
+			//DebugMsg("No direct power found, checking for remote power");
+			return BlockLogicGate.HasActivePower(world, _clrIdx, _blockPos);
+		}
+		//DebugMsg("Block Power Is Off");
+		return false;
+	}
+	
+	static Vector3i[] PowerInputLocations(Vector3i _blockPos)
+	{
+		int inputSpace = 2;
+		Vector3i inputPosA = _blockPos;
+		Vector3i inputPosB = _blockPos;
+		Vector3i inputPosC = _blockPos;
+		Vector3i inputPosD = _blockPos;
+		Vector3i inputPosE = _blockPos;
+		Vector3i inputPosF = _blockPos;
+		
+		inputPosA.y = _blockPos.y+inputSpace;
+		inputPosB.y = _blockPos.y-inputSpace;
+		inputPosC.x = _blockPos.x+inputSpace;
+		inputPosD.x = _blockPos.x-inputSpace;
+		inputPosE.z = _blockPos.z+inputSpace;
+		inputPosF.z = _blockPos.z-inputSpace;
+		
+		Vector3i[] array = new Vector3i[6];
+		array[0] = inputPosA;
+		array[1] = inputPosB;
+		array[2] = inputPosC;
+		array[3] = inputPosD;
+		array[4] = inputPosE;
+		array[5] = inputPosF;
+		return array;
+		
+	}
+	
+	//Used for severs, block will be NOT be powered directly. Also used in SP if AllowRemotePower is true in the xml.
+	public static bool HasActivePower(WorldBase _world, int _cIdx, Vector3i _blockPos)
+	{
+		Vector3i[] locations = PowerInputLocations(_blockPos);
+		foreach (Vector3i vector in locations)
+		{
+			BlockValue inputBlockValue = _world.GetBlock(vector);
+			Type inputBlockType = Block.list[inputBlockValue.type].GetType();
+			if(inputBlockType == typeof(BlockPowered))
+			{
+				TileEntityPowered tileEntityPowered = (TileEntityPowered)_world.GetTileEntity(_cIdx, vector);
+				if (tileEntityPowered != null)
+				{
+					if(tileEntityPowered.IsPowered)
+					{
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public override TileEntityPowered CreateTileEntity(Chunk chunk)
+	{
+		PowerItem.PowerItemTypes powerItemType = PowerItem.PowerItemTypes.Consumer;
+		powerItemType = PowerItem.PowerItemTypes.ConsumerToggle;
+		return new TileEntityPoweredBlock(chunk)
+		{
+			PowerItemType = powerItemType
+		};
+	}
+	
+	private BlockActivationCommand[] RK = new BlockActivationCommand[]
+	{
+		new BlockActivationCommand("take", "hand", false)
+	};
+	
+	public override string GetActivationText(WorldBase _world, BlockValue _blockValue, int _clrIdx, Vector3i _blockPos, EntityAlive _entityFocusing)
+	{
+		if (!this.RK[0].enabled)
+		{
+			return string.Empty;
+		}
+		Block block = Block.list[_blockValue.type];
+		string blockName = block.GetBlockName();
+		return string.Format(Localization.Get("pickupPrompt", string.Empty), Localization.Get(blockName, string.Empty));
+	}
 }
