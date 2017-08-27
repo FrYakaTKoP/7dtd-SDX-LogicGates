@@ -105,9 +105,6 @@ public class BlockLogicGateMain : BlockPowered
 		msg = String.Concat(msg, flag2msg);
 		msg = String.Concat(msg, " &3=");
 		msg = String.Concat(msg, flag3msg);
-		// notworking f***
-		// string msg = String.Format("XR - BlockValue.meta &2=", flag2msg, " &3=", flag3msg);	
-		// string msg = String.Format("XR - BlockValue.meta &2=", flag2 ? "true" : "false", " &3=", flag3 ? "true" : "false");
 		DebugMsg(msg);
 		
         flagOnBlockActivated = false; // this disables runtimetoggle
