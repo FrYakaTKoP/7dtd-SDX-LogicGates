@@ -1,10 +1,10 @@
 <configs>
 	<config name="blocks">
 		<append xpath="/blocks">
-			<block id="2042" name="LogicGate">		
+			<block id="2042" name="LogicGateMain">		
 				<property name="Extends" value="ceilingLight02_player" />
 				<property name="CustomIcon" value="openSign" />
-				<property name="Class" value="LogicGate, Mods" />
+				<property name="Class" value="LogicGateMain, Mods" />
 				<property name="Model" value="#LogicGate?MainLogicGate"/>
 				<property name="HandleFace" value="Bottom"/>
 				<!-- <property name="Model" value="#NeonSign?NeonOpenSignPrefab"/> -->
@@ -14,13 +14,14 @@
 				<property name="AllowRemotePower" value="false" />
 				<property name="EconomicValue" value="48" />
 			</block>
-		<!--	
+
 			<block id="2043" name="logicGateInput">
-				<property name="Class" value="Powered" />
+				<property name="Class" value="LogicGateInput, Mods" />
 				<property name="Extends" value="electricwirerelay" />
 				<property name="RequiredPower" value="1" />			
 				<property name="CustomIcon" value="electricwirerelay" />
 			</block>
+		<!--
 			<block id="2044" name="logicGateOutput">
 				<property name="Class" value="Powered" />
 				<property name="CustomIcon" value="electricwirerelay" />
