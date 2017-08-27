@@ -126,15 +126,45 @@ public class BlockLogicGateMain : BlockPowered
 				Manager.BroadcastPlay(vector3i.ToVector3(), "switch_down");
 			}
 		}		
+
 		
+
 		TileEntityPoweredTrigger tileEntityPoweredTrigger = worldBase.GetTileEntity(num, vector3i) as 	TileEntityPoweredTrigger;
-		if (Steam.Network.IsServer)
-		{
-			if (tileEntityPoweredTrigger != null)
-			{
+		if (tileEntityPoweredTrigger != null)
+		{	
+			DebugMsg(String.Concat("XR -> tEPT.IsTriggered1=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));	
+			// if (Steam.Network.IsServer)
+			// {
 				tileEntityPoweredTrigger.IsTriggered = flag3;
-			}
+			// }			
+			DebugMsg(String.Concat("XR -> tEPT.IsTriggered2=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));	
+			//tileEntityPoweredTrigger.ResetTrigger();
+			
+			DebugMsg(String.Concat("XR -> tEPT.IsTriggered3=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));	
+			
 		}
+		// 		
+		TileEntityPowered tileEntityPowered = worldBase.GetTileEntity(num, vector3i) as TileEntityPowered;
+		if(tileEntityPowered != null)
+		{				
+			PowerItem powerItem = tileEntityPowered.GetPowerItem() as PowerItem;
+			if(powerItem != null)
+			{
+				// crashes the game 
+				//powerItem.HandlePowerUpdate(flag3);
+	
+			}
+			
+			DebugMsg(String.Concat("XR -> tEP.ChildCount=", tileEntityPowered.ChildCount));
+			DebugMsg(String.Concat("XR -> tEP.isPowered=", tileEntityPowered.IsPowered ? "1" : "0"));
+			
+			// not sure but not what we looking for :(
+			//tileEntityPowered.CheckForNewWires();
+			
+			// don't do anything 
+			//tileEntityPowered.MarkChanged();
+		}
+		
 		
 		BlockEntityData blockEntity = ((World)worldBase).ChunkClusters[num].GetBlockEntity(vector3i);
 		if (blockEntity != null && blockEntity.transform != null && blockEntity.transform.gameObject != null)
@@ -310,18 +340,19 @@ public class BlockLogicGateMain : BlockPowered
 			isOn2 = false;
 		}		
 		DebugMsg(String.Concat("ActivateBlock isOn2=", isOn2 ? "true" : "false"));
-		if(isOn != isOn2)
-		{
-			TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
-			if (tileEntityPoweredTrigger != null)
-			{
-				tileEntityPoweredTrigger.IsTriggered = isOn2;				
-				DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.isTriggered", tileEntityPoweredTrigger.IsTriggered ? "true" : "false"));
-				//tileEntityPoweredTrigger.
-				tileEntityPoweredTrigger.Activate(isPowered, isOn2);
-			}
-		}
 		
+			if(isOn != isOn2)
+			{
+				TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
+				if (tileEntityPoweredTrigger != null)
+				{
+					tileEntityPoweredTrigger.IsTriggered = isOn2;				
+					DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.IsTriggered", tileEntityPoweredTrigger.IsTriggered ? "true" : "false"));
+					//tileEntityPoweredTrigger.
+					tileEntityPoweredTrigger.Activate(isPowered, isOn2);
+				}
+			}
+
 		_blockValue.meta = (byte)(((int)_blockValue.meta & -3) | ((!isOn2) ? 0 : 2));
 		_blockValue.meta = (byte)(((int)_blockValue.meta & -2) | ((!isPowered) ? 0 : 1));
 		this.XR(_world, _cIdx, _blockPos, _blockValue, false);
@@ -346,13 +377,26 @@ public class BlockLogicGateMain : BlockPowered
 		return this.MU;
 	}
 
+
 	public override TileEntityPowered CreateTileEntity(Chunk chunk)
 	{
 		return new TileEntityPoweredTrigger(chunk)
 		{
 			TriggerType = PowerTrigger.TriggerTypes.Switch
 		};
-    }
+    } 
+
+	/* 
+		// output does not update
+		// BlockPressurePlate
+		public override TileEntityPowered CreateTileEntity(Chunk chunk)
+		{
+			return new TileEntityPoweredTrigger(chunk)
+			{
+				TriggerType = PowerTrigger.TriggerTypes.PressurePlate
+			};
+		}
+	*/
 
 	public static bool IsSwitchOn(byte _metadata)
 	{

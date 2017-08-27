@@ -7,7 +7,6 @@
 				<property name="Class" value="LogicGateMain, Mods" />
 				<property name="Model" value="#LogicGate?MainLogicGate"/>
 				<property name="HandleFace" value="Bottom"/>
-				<!-- <property name="Model" value="#NeonSign?NeonOpenSignPrefab"/> -->
 				<property name="Collide" value="movement,melee,rocket" />
 				<property name="HandleFace" value="South" />
 				<property name="TakeDelay" value="5" />
