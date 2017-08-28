@@ -8,9 +8,9 @@ using System.Diagnostics;
 
 public class BlockLogicGateMain : BlockPowered
 {	
-    private bool showDebugLog = true;
+    private static bool showDebugLog = true;
 
-	public void DebugMsg(string msg)
+	public static void DebugMsg(string msg)
 	{
 		if(showDebugLog)
 		{
@@ -152,6 +152,15 @@ public class BlockLogicGateMain : BlockPowered
 	
 			}
 			
+        /*
+            PowerTrigger powerTrigger = tileEntityPowered.GetPowerItem() as PowerTrigger;
+			if(powerTrigger != null)
+			{   
+                
+				powerTrigger.isTriggered = flag3;	
+			}
+        */            
+            
 			DebugMsg(String.Concat("XR -> tEP.ChildCount=", tileEntityPowered.ChildCount));
 			DebugMsg(String.Concat("XR -> tEP.isPowered=", tileEntityPowered.IsPowered ? "1" : "0"));
 			
@@ -382,18 +391,6 @@ public class BlockLogicGateMain : BlockPowered
 			TriggerType = PowerTrigger.TriggerTypes.Switch
 		};
     } 
-
-	/* 
-		// output does not update
-		// BlockPressurePlate
-		public override TileEntityPowered CreateTileEntity(Chunk chunk)
-		{
-			return new TileEntityPoweredTrigger(chunk)
-			{
-				TriggerType = PowerTrigger.TriggerTypes.PressurePlate
-			};
-		}
-	*/
 
 	public static bool IsSwitchOn(byte _metadata)
 	{
