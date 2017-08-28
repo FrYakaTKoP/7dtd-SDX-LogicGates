@@ -149,7 +149,13 @@ public class BlockLogicGateMain : BlockPowered
 			{
 				// crashes the game 
 				//powerItem.HandlePowerUpdate(flag3);
-	
+			}
+			
+			PowerTrigger powerTrigger = tileEntityPowered.GetPowerItem() as PowerTrigger;
+			if(powerTrigger != null)
+			{		
+				// crashes the game 
+				//powerTrigger.HandlePowerUpdate(flag3);
 			}
 			
         /*
