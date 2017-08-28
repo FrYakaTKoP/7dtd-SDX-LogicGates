@@ -167,7 +167,7 @@ public class BlockLogicGateMain : BlockPowered
             // 
             //tileEntityPowered.;
 			
-			// not sure but not what we looking for :(
+			// not sure
 			//tileEntityPowered.CheckForNewWires();
 			
 			// don't do anything noticeable
@@ -177,12 +177,14 @@ public class BlockLogicGateMain : BlockPowered
             //tileEntityPowered.CheckForNewWires();
 		}
         
+    /*     
         TileEntity tileEntity = worldBase.GetTileEntity(num, vector3i) as 	TileEntity;
 		if (tileEntity != null)
 		{
-            tileEntity.SetModified();
+            // don't do anything noticeable
+			//tileEntity.SetModified();
         }
-        
+      */   
         
 		
 		
