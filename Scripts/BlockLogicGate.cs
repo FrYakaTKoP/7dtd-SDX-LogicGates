@@ -163,13 +163,27 @@ public class BlockLogicGateMain : BlockPowered
             
 			DebugMsg(String.Concat("XR -> tEP.ChildCount=", tileEntityPowered.ChildCount));
 			DebugMsg(String.Concat("XR -> tEP.isPowered=", tileEntityPowered.IsPowered ? "1" : "0"));
+            
+            // 
+            //tileEntityPowered.;
 			
 			// not sure but not what we looking for :(
 			//tileEntityPowered.CheckForNewWires();
 			
-			// don't do anything 
+			// don't do anything noticeable
 			//tileEntityPowered.MarkChanged();
+            
+            // don't do anything noticeable
+            //tileEntityPowered.CheckForNewWires();
 		}
+        
+        TileEntity tileEntity = worldBase.GetTileEntity(num, vector3i) as 	TileEntity;
+		if (tileEntity != null)
+		{
+            tileEntity.SetModified();
+        }
+        
+        
 		
 		
 		BlockEntityData blockEntity = ((World)worldBase).ChunkClusters[num].GetBlockEntity(vector3i);
