@@ -138,7 +138,8 @@ public class BlockLogicGateMain : BlockPowered
 			//tileEntityPoweredTrigger.ResetTrigger();
 			
 			DebugMsg(String.Concat("XR -> tEPT.IsTriggered3=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));	
-			
+            
+
 		}
 		// 		
 		TileEntityPowered tileEntityPowered = _world.GetTileEntity(_cIdx, _blockPos) as TileEntityPowered;
@@ -156,16 +157,7 @@ public class BlockLogicGateMain : BlockPowered
 			{		
 				// crashes the game 
 				//powerTrigger.HandlePowerUpdate(flag3);
-			}
-			
-        /*
-            PowerTrigger powerTrigger = tileEntityPowered.GetPowerItem() as PowerTrigger;
-			if(powerTrigger != null)
-			{   
-                
-				powerTrigger.isTriggered = flag3;	
-			}
-        */            
+			}         
             
 			DebugMsg(String.Concat("XR -> tEP.ChildCount=", tileEntityPowered.ChildCount));
 			DebugMsg(String.Concat("XR -> tEP.isPowered=", tileEntityPowered.IsPowered ? "1" : "0"));
