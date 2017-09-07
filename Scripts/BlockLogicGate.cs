@@ -93,52 +93,28 @@ public class BlockLogicGateMain : BlockPowered
 		{
 			return false;
 		}
-		
-
-        DebugMsg("XR2");		
 				
 		bool hasSecondInput = HasActivePower(_world, _cIdx, _blockPos);
 		
-<<<<<<< HEAD
-		bool BlockIsPowered = (blockValue.meta & 1) != 0; // seems to be BlockIsPowered
-		bool BlockIsTriggered = (blockValue.meta & 2) != 0; // seems to be SwitchIsOn 
+		bool BlockIsPowered = (_blockValue.meta & 1) != 0; // seems to be BlockIsPowered
+		bool BlockIsTriggered = (_blockValue.meta & 2) != 0; // seems to be SwitchIsOn 
 		
 		string BlockIsPoweredmsg = BlockIsPowered ? "true" : "false";
 		string BlockIsTriggeredmsg = BlockIsTriggered ? "true" : "false"; 
 		string msg = "XR - BlockValue.meta &2=";
 		msg = String.Concat(msg, BlockIsPoweredmsg);
-=======
-		bool flag2 = (_blockValue.meta & 1) != 0; // seems to be BlockIsPowered
-		bool flag3 = (_blockValue.meta & 2) != 0; // seems to be SwitchIsOn 
-		
-		string flag2msg = flag2 ? "true" : "false";
-		string flag3msg = flag3 ? "true" : "false"; 
-		string msg = "XR - _blockValue.meta &2=";
-		msg = String.Concat(msg, flag2msg);
->>>>>>> 40d3c5c5f734ea212ca9546317df2e32453eacc7
 		msg = String.Concat(msg, " &3=");
 		msg = String.Concat(msg, BlockIsTriggeredmsg);
 		DebugMsg(msg);
 		
-		
-        DebugMsg("XR3");
-		
         flagOnBlockActivated = false; // this disables runtimetoggle
 		if (flagOnBlockActivated)
 		{
-<<<<<<< HEAD
 			BlockIsTriggered = !BlockIsTriggered;
-			blockValue.meta = (byte)(((int)blockValue.meta & -3) | ((!BlockIsTriggered) ? 0 : 2));
-			blockValue.meta = (byte)(((int)blockValue.meta & -2) | ((!BlockIsPowered) ? 0 : 1));
-			worldBase.SetBlockRPC(num, vector3i, blockValue);
-			if (BlockIsTriggered)
-=======
-			flag3 = !flag3;
-			_blockValue.meta = (byte)(((int)_blockValue.meta & -3) | ((!flag3) ? 0 : 2));
-			_blockValue.meta = (byte)(((int)_blockValue.meta & -2) | ((!flag2) ? 0 : 1));
+			_blockValue.meta = (byte)(((int)_blockValue.meta & -3) | ((!BlockIsTriggered) ? 0 : 2));
+			_blockValue.meta = (byte)(((int)_blockValue.meta & -2) | ((!BlockIsPowered) ? 0 : 1));
 			_world.SetBlockRPC(_cIdx, _blockPos, _blockValue);
-			if (flag3)
->>>>>>> 40d3c5c5f734ea212ca9546317df2e32453eacc7
+			if (BlockIsTriggered)
 			{
 				Manager.BroadcastPlay(_blockPos.ToVector3(), "switch_up");
 			}
@@ -149,7 +125,6 @@ public class BlockLogicGateMain : BlockPowered
 		}		
 
 		
-        DebugMsg("XR4");
 
 		TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
 		if (tileEntityPoweredTrigger != null)
@@ -161,18 +136,11 @@ public class BlockLogicGateMain : BlockPowered
 			// }			
 			DebugMsg(String.Concat("XR -> tEPT.IsTriggered2=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));	
 			//tileEntityPoweredTrigger.ResetTrigger();
-<<<<<<< HEAD
-=======
 			
 			DebugMsg(String.Concat("XR -> tEPT.IsTriggered3=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));	
             
 
->>>>>>> 40d3c5c5f734ea212ca9546317df2e32453eacc7
 		}
-		
-		
-        DebugMsg("XR5");
-		
 		// 		
 		TileEntityPowered tileEntityPowered = _world.GetTileEntity(_cIdx, _blockPos) as TileEntityPowered;
 		if(tileEntityPowered != null)
@@ -188,22 +156,8 @@ public class BlockLogicGateMain : BlockPowered
 			if(powerTrigger != null)
 			{		
 				// crashes the game 
-<<<<<<< HEAD
 				//powerTrigger.HandlePowerUpdate(BlockIsTriggered);
-			}
-			
-        /*
-            PowerTrigger powerTrigger = tileEntityPowered.GetPowerItem() as PowerTrigger;
-			if(powerTrigger != null)
-			{   
-                
-				powerTrigger.isTriggered = BlockIsTriggered;	
-			}
-        */            
-=======
-				//powerTrigger.HandlePowerUpdate(flag3);
 			}         
->>>>>>> 40d3c5c5f734ea212ca9546317df2e32453eacc7
             
 			DebugMsg(String.Concat("XR -> tEP.ChildCount=", tileEntityPowered.ChildCount));
 			DebugMsg(String.Concat("XR -> tEP.isPowered=", tileEntityPowered.IsPowered ? "1" : "0"));
@@ -231,7 +185,6 @@ public class BlockLogicGateMain : BlockPowered
       */   
         
 		
-        DebugMsg("XR6");
 		
 		BlockEntityData _ebcd = ((World)_world).ChunkClusters[_cIdx].GetBlockEntity(_blockPos);
 		if (_ebcd != null && _ebcd.transform != null && _ebcd.transform.gameObject != null)
@@ -240,7 +193,6 @@ public class BlockLogicGateMain : BlockPowered
             //GameObject IndicatorsObj = GameObject.Find("Indicators").gameObject;
             
             GameObject IndicatorsObj = _ebcd.transform.Find("Indicators").gameObject;			
-			
 
 			if(IndicatorsObj == null)
 			{
@@ -292,14 +244,7 @@ public class BlockLogicGateMain : BlockPowered
 					}
 				}
 			}
-<<<<<<< HEAD
-		}
-		
-        DebugMsg("XR7");
-		
-=======
 		}		
->>>>>>> 40d3c5c5f734ea212ca9546317df2e32453eacc7
 		return true;
 	}
 	
