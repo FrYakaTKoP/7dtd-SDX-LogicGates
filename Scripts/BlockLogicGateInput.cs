@@ -2,6 +2,8 @@ using GUI_2;
 using System;
 using UnityEngine;
 
+using System.Diagnostics;
+
 public class BlockLogicGateInput : BlockPowered
 {
 	private BlockEntityData HT;
@@ -23,7 +25,7 @@ public class BlockLogicGateInput : BlockPowered
 		if(showDebugLog)
 		{
             String msg2 = String.Concat("SDX BlockLogicGateInput.", msg);
-			Debug.Log(msg2);
+			UnityEngine.Debug.Log(msg2);
 		}
 	}
 
@@ -92,7 +94,9 @@ public class BlockLogicGateInput : BlockPowered
 
 	public override bool OnBlockActivated(int _indexInBlockActivationCommands, WorldBase _world, int _cIdx, Vector3i _blockPos, BlockValue _blockValue, EntityAlive _player)
 	{		
-        DebugMsg("OnBlockActivated");
+        DebugMsg("OnBlockActivated");  
+        
+        
 		if (_indexInBlockActivationCommands != 0)
 		{
 			if (_indexInBlockActivationCommands == 1)
@@ -189,6 +193,20 @@ public class BlockLogicGateInput : BlockPowered
 
 	public override bool ActivateBlock(WorldBase _world, int _cIdx, Vector3i _blockPos, BlockValue _blockValue, bool isOn, bool isPowered)
 	{
+        DebugMsg("ActivateBlock");
+		
+		// Get call stack
+		StackTrace stackTrace = new StackTrace();
+
+		// Get calling method name
+		DebugMsg(String.Concat("ActivateBlock Caller1 ", stackTrace.GetFrame(1).GetMethod()));
+		DebugMsg(String.Concat("ActivateBlock Caller2 ", stackTrace.GetFrame(2).GetMethod()));
+		DebugMsg(String.Concat("ActivateBlock Caller3 ", stackTrace.GetFrame(3).GetMethod()));
+		DebugMsg(String.Concat("ActivateBlock Caller4 ", stackTrace.GetFrame(4).GetMethod()));
+		
+		DebugMsg(String.Concat("ActivateBlock isPowered=", isPowered ? "true" : "false"));
+		DebugMsg(String.Concat("ActivateBlock isOn=", isOn ? "true" : "false"));
+        
 		_blockValue.meta = (byte)(((int)_blockValue.meta & -3) | ((!isOn) ? 0 : 2));
 		_world.SetBlockRPC(_cIdx, _blockPos, _blockValue);
 		this.ZR(_world, _cIdx, _blockPos, _blockValue, false);
