@@ -93,28 +93,34 @@ public class BlockLogicGateMain : BlockPowered
 		{
 			return false;
 		}
+		
+
+        DebugMsg("XR2");		
 				
 		bool hasSecondInput = HasActivePower(worldBase, num, vector3i);
 		
-		bool flag2 = (blockValue.meta & 1) != 0; // seems to be BlockIsPowered
-		bool flag3 = (blockValue.meta & 2) != 0; // seems to be SwitchIsOn 
+		bool BlockIsPowered = (blockValue.meta & 1) != 0; // seems to be BlockIsPowered
+		bool BlockIsTriggered = (blockValue.meta & 2) != 0; // seems to be SwitchIsOn 
 		
-		string flag2msg = flag2 ? "true" : "false";
-		string flag3msg = flag3 ? "true" : "false"; 
+		string BlockIsPoweredmsg = BlockIsPowered ? "true" : "false";
+		string BlockIsTriggeredmsg = BlockIsTriggered ? "true" : "false"; 
 		string msg = "XR - BlockValue.meta &2=";
-		msg = String.Concat(msg, flag2msg);
+		msg = String.Concat(msg, BlockIsPoweredmsg);
 		msg = String.Concat(msg, " &3=");
-		msg = String.Concat(msg, flag3msg);
+		msg = String.Concat(msg, BlockIsTriggeredmsg);
 		DebugMsg(msg);
+		
+		
+        DebugMsg("XR3");
 		
         flagOnBlockActivated = false; // this disables runtimetoggle
 		if (flagOnBlockActivated)
 		{
-			flag3 = !flag3;
-			blockValue.meta = (byte)(((int)blockValue.meta & -3) | ((!flag3) ? 0 : 2));
-			blockValue.meta = (byte)(((int)blockValue.meta & -2) | ((!flag2) ? 0 : 1));
+			BlockIsTriggered = !BlockIsTriggered;
+			blockValue.meta = (byte)(((int)blockValue.meta & -3) | ((!BlockIsTriggered) ? 0 : 2));
+			blockValue.meta = (byte)(((int)blockValue.meta & -2) | ((!BlockIsPowered) ? 0 : 1));
 			worldBase.SetBlockRPC(num, vector3i, blockValue);
-			if (flag3)
+			if (BlockIsTriggered)
 			{
 				Manager.BroadcastPlay(vector3i.ToVector3(), "switch_up");
 			}
@@ -125,6 +131,7 @@ public class BlockLogicGateMain : BlockPowered
 		}		
 
 		
+        DebugMsg("XR4");
 
 		TileEntityPoweredTrigger tileEntityPoweredTrigger = worldBase.GetTileEntity(num, vector3i) as 	TileEntityPoweredTrigger;
 		if (tileEntityPoweredTrigger != null)
@@ -132,14 +139,15 @@ public class BlockLogicGateMain : BlockPowered
 			DebugMsg(String.Concat("XR -> tEPT.IsTriggered1=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));	
 			// if (Steam.Network.IsServer)
 			// {
-				tileEntityPoweredTrigger.IsTriggered = flag3;
+				tileEntityPoweredTrigger.IsTriggered = BlockIsTriggered;
 			// }			
 			DebugMsg(String.Concat("XR -> tEPT.IsTriggered2=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));	
 			//tileEntityPoweredTrigger.ResetTrigger();
-			
-			DebugMsg(String.Concat("XR -> tEPT.IsTriggered3=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));	
-			
 		}
+		
+		
+        DebugMsg("XR5");
+		
 		// 		
 		TileEntityPowered tileEntityPowered = worldBase.GetTileEntity(num, vector3i) as TileEntityPowered;
 		if(tileEntityPowered != null)
@@ -148,14 +156,14 @@ public class BlockLogicGateMain : BlockPowered
 			if(powerItem != null)
 			{
 				// crashes the game 
-				//powerItem.HandlePowerUpdate(flag3);
+				//powerItem.HandlePowerUpdate(BlockIsTriggered);
 			}
 			
 			PowerTrigger powerTrigger = tileEntityPowered.GetPowerItem() as PowerTrigger;
 			if(powerTrigger != null)
 			{		
 				// crashes the game 
-				//powerTrigger.HandlePowerUpdate(flag3);
+				//powerTrigger.HandlePowerUpdate(BlockIsTriggered);
 			}
 			
         /*
@@ -163,7 +171,7 @@ public class BlockLogicGateMain : BlockPowered
 			if(powerTrigger != null)
 			{   
                 
-				powerTrigger.isTriggered = flag3;	
+				powerTrigger.isTriggered = BlockIsTriggered;	
 			}
         */            
             
@@ -193,6 +201,7 @@ public class BlockLogicGateMain : BlockPowered
       */   
         
 		
+        DebugMsg("XR6");
 		
 		BlockEntityData blockEntity = ((World)worldBase).ChunkClusters[num].GetBlockEntity(vector3i);
 		if (blockEntity != null && blockEntity.transform != null && blockEntity.transform.gameObject != null)
@@ -210,51 +219,48 @@ public class BlockLogicGateMain : BlockPowered
 				{
 					GameObject Indicator = Indicators[i].gameObject;
 					Color tempColor;
-					if (flag2)
+					if (Indicator.name == "IndMainPower")
 					{
-						// BlockMeta is powered
-						if(flag3)
+						if (BlockIsPowered)
 						{
-							// BlockMeta is toggled
-							if(hasSecondInput == true){
-								// switch has 2nd input
-								tempColor = Color.blue;
-							}
-							else
-							{
-								tempColor = Color.green;								
-							}
+							tempColor = Color.green;
 						}
 						else
-							// switch is Off
-							if(hasSecondInput == true){
-								// switch has 2nd input
-								tempColor = Color.yellow;
-							}
-							else
-							{
-								tempColor = Color.red;								
-							}							
-						}
-					else
-					{							
-						// switch has no power
-						if(hasSecondInput == true){
-							// test wise a "there is 2nd input" even no power on the switch
+						{
+							tempColor = Color.black;								
+						}	
+						SetIndicatorColor(Indicator, tempColor);
+						
+					}
+					if (System.Text.RegularExpressions.Regex.Match(Indicator.name, @"Input").Success)
+					{
+						if (hasSecondInput)
+						{
 							tempColor = Color.yellow;
 						}
 						else
 						{
 							tempColor = Color.black;								
 						}	
-					}	
-					if (Indicator.name == "IndMainPower")
+						SetIndicatorColor(Indicator, tempColor);						
+					}
+					if (Indicator.name == "IndOutput")
 					{
-						SetIndicatorColor(Indicator, tempColor);
+						if (hasSecondInput && BlockIsPowered)
+						{
+							tempColor = Color.blue;
+						}
+						else
+						{
+							tempColor = Color.black;								
+						}	
+						SetIndicatorColor(Indicator, tempColor);						
 					}
 				}
 			}
 		}
+		
+        DebugMsg("XR7");
 		
 		return true;
 	}
