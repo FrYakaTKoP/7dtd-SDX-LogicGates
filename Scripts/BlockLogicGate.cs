@@ -49,12 +49,17 @@ public class BlockLogicGateMain : BlockPowered
 	public override bool OnBlockActivated(int _indexInBlockActivationCommands, WorldBase _world, int _cIdx, Vector3i _blockPos, BlockValue _blockValue, EntityAlive _player)
 	{
         DebugMsg("OnBlockActivated");
+
+			
 		// Get call stack
 		StackTrace stackTrace = new StackTrace();
-
 		// Get calling method name
-		DebugMsg(stackTrace.GetFrame(1).GetMethod().Name);
-		DebugMsg(String.Concat("blub ", stackTrace.GetFrame(2).GetMethod()));
+		DebugMsg(String.Concat("OnBlockActivated Caller1 ", stackTrace.GetFrame(1).GetMethod()));
+		DebugMsg(String.Concat("OnBlockActivated Caller2 ", stackTrace.GetFrame(2).GetMethod()));
+		DebugMsg(String.Concat("OnBlockActivated Caller3 ", stackTrace.GetFrame(3).GetMethod()));
+		DebugMsg(String.Concat("OnBlockActivated Caller4 ", stackTrace.GetFrame(4).GetMethod()));
+		DebugMsg(String.Concat("OnBlockActivated Caller5 ", stackTrace.GetFrame(5).GetMethod()));
+		DebugMsg(String.Concat("OnBlockActivated Caller6 ", stackTrace.GetFrame(6).GetMethod()));
 		
 		if (_indexInBlockActivationCommands != 0)
 		{
@@ -301,6 +306,7 @@ public class BlockLogicGateMain : BlockPowered
 	public override void OnBlockEntityTransformAfterActivated(WorldBase _world, Vector3i _blockPos, int _cIdx, BlockValue _blockValue, BlockEntityData _ebcd)
 	{
         DebugMsg("OnBlockEntityTransformAfterActivated");
+		this.XR(_world, _cIdx, _blockPos, _blockValue, false);
 		base.OnBlockEntityTransformAfterActivated(_world, _blockPos, _cIdx, _blockValue, _ebcd);
 		/*
  			bool flag = (_blockValue.meta & 1) != 0;
@@ -334,13 +340,17 @@ public class BlockLogicGateMain : BlockPowered
 	public override bool ActivateBlock(WorldBase _world, int _cIdx, Vector3i _blockPos, BlockValue _blockValue, bool isOn, bool isPowered)
 	{
         DebugMsg("ActivateBlock");
-		
+		bool isOn2 = false;
+			
 		// Get call stack
 		StackTrace stackTrace = new StackTrace();
-
 		// Get calling method name
-		DebugMsg(String.Concat("ActivateBlock Caller ", stackTrace.GetFrame(1).GetMethod()));
-		DebugMsg(String.Concat("ActivateBlock Caller Caller ", stackTrace.GetFrame(2).GetMethod()));
+		DebugMsg(String.Concat("ActivateBlock Caller1 ", stackTrace.GetFrame(1).GetMethod()));
+		DebugMsg(String.Concat("ActivateBlock Caller2 ", stackTrace.GetFrame(2).GetMethod()));
+		DebugMsg(String.Concat("ActivateBlock Caller3 ", stackTrace.GetFrame(3).GetMethod()));
+		DebugMsg(String.Concat("ActivateBlock Caller4 ", stackTrace.GetFrame(4).GetMethod()));
+		DebugMsg(String.Concat("ActivateBlock Caller5 ", stackTrace.GetFrame(5).GetMethod()));
+		DebugMsg(String.Concat("ActivateBlock Caller6 ", stackTrace.GetFrame(6).GetMethod()));
 		
 		DebugMsg(String.Concat("ActivateBlock isPowered=", isPowered ? "1" : "0"));
 		DebugMsg(String.Concat("ActivateBlock isOn=", isOn ? "1" : "0"));
@@ -349,30 +359,30 @@ public class BlockLogicGateMain : BlockPowered
 		
 		if(hasSecondInput && isPowered){
 			// switch has 2nd input
-			hasSecondInput = true;
+			isOn2 = true;
 		}
 		else
 		{
-			hasSecondInput = false;
+			isOn2 = false;
 		}		
-		DebugMsg(String.Concat("ActivateBlock hasSecondInput=", hasSecondInput ? "1" : "0"));
+		DebugMsg(String.Concat("ActivateBlock isOn2=", isOn2 ? "1" : "0"));
 		
 
-        TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
-        if (tileEntityPoweredTrigger != null)
-        {
-            if(isOn != hasSecondInput)
-            {
-            tileEntityPoweredTrigger.IsTriggered = hasSecondInput;//tileEntityPoweredTrigger.
-            
-            //tileEntityPoweredTrigger.Activate(isPowered, hasSecondInput);
-            }
-            DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.IsTriggered=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
-        }				
-					
+		TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
+		if (tileEntityPoweredTrigger != null)
+		{
+			if(isOn != isOn2)
+			{
+			tileEntityPoweredTrigger.IsTriggered = isOn2; //tileEntityPoweredTrigger.
+			
+			//tileEntityPoweredTrigger.Activate(isPowered, hasSecondInput);
+			}
+			DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.IsTriggered=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
+		}				
+						
 
-		_blockValue.meta = (byte)(((int)_blockValue.meta & -3) | ((!hasSecondInput) ? 0 : 2));
-		_blockValue.meta = (byte)(((int)_blockValue.meta & -2) | ((!isPowered) ? 0 : 1));
+			_blockValue.meta = (byte)(((int)_blockValue.meta & -3) | ((!hasSecondInput) ? 0 : 2));
+			_blockValue.meta = (byte)(((int)_blockValue.meta & -2) | ((!isPowered) ? 0 : 1));
 		this.XR(_world, _cIdx, _blockPos, _blockValue, false);
 		_world.SetBlockRPC(_cIdx, _blockPos, _blockValue);
 		return true;
@@ -382,7 +392,7 @@ public class BlockLogicGateMain : BlockPowered
 	{
         DebugMsg("OnBlockValueChanged");
 		base.OnBlockValueChanged(_world, _clrIdx, _blockPos, _oldBlockValue, _newBlockValue);
-		this.XR(_world, _clrIdx, _blockPos, _newBlockValue, false);
+		//this.XR(_world, _clrIdx, _blockPos, _newBlockValue, false);
 		BlockEntityData _ebcd = ((World)_world).ChunkClusters[_clrIdx].GetBlockEntity(_blockPos);
 		//this.HR(_ebcd, BlockSwitch.IsSwitchOn(_newBlockValue.meta), _newBlockValue);
 	}
@@ -398,14 +408,22 @@ public class BlockLogicGateMain : BlockPowered
 
 	public override TileEntityPowered CreateTileEntity(Chunk chunk)
 	{
+		DebugMsg("CreateTileEntity");
 		return new TileEntityPoweredTrigger(chunk)
 		{
 			TriggerType = PowerTrigger.TriggerTypes.Switch
+			//TriggerType = PowerTrigger.TriggerTypes.TripWire
 		};
     } 
 
 	public static bool IsSwitchOn(byte _metadata)
 	{
+		DebugMsg("IsSwitchOn()");
+		// Get call stack
+		StackTrace stackTrace = new StackTrace();
+		// Get calling method name
+		DebugMsg(String.Concat("IsSwitchOn() Caller ", stackTrace.GetFrame(1).GetMethod()));
+		DebugMsg(String.Concat("IsSwitchOn() Caller Caller ", stackTrace.GetFrame(2).GetMethod()));
 		return (_metadata & 2) != 0;
 	}
 

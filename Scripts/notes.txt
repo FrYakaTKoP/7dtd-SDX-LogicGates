@@ -1,0 +1,13 @@
+
+// user triggers Switch in net and 2nd input goes low
+Update -> Update -> Update -> HandlePowerUpdate -> HandlePowerUpdate -> Activate ->| ActivateBlock
+ActivateBlock -> Set_IsTriggered -> Set_IsTriggered -> HandleDisconnectChildren -> HandlePowerUpdate -> Activate ->| ActivateBlock
+
+// user trigger switch in net and 2nd input goes high
+Update -> Update -> Update -> HandlePowerUpdate -> HandlePowerUpdate -> Activate ->| ActivateBlock 
+
+// user activate (use) block while 2nd input high but children not powered (not updated state) 
+noRef -> Update -> SetCurrentBlockData -> JDT -> CallContextAction ->| OnBlockActivated
+Update -> OnUpdateDeltaTime -> Update -> Update -> Update -> CallContextAction ->| OnBlockActivated
+Update -> Update -> Update -> HandlePowerUpdate -> HandlePowerUpdate -> Activate ->|ActivateBlock
+// now children are powered
