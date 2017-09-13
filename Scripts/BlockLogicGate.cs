@@ -76,7 +76,7 @@ public class BlockLogicGateMain : BlockPowered
 			{
 				return false;
 			}
-			this.XR(_world, _cIdx, _blockPos, _blockValue, true);
+			//this.XR(_world, _cIdx, _blockPos, _blockValue, true);
 			return true;
 		}
 	}
@@ -101,16 +101,14 @@ public class BlockLogicGateMain : BlockPowered
 				
 		bool hasSecondInput = HasActivePower(_world, _cIdx, _blockPos);
 		
-		bool BlockIsPowered = (_blockValue.meta & 1) != 0; // seems to be BlockIsPowered
-		bool BlockIsTriggered = (_blockValue.meta & 2) != 0; // seems to be SwitchIsOn 
+		bool BlockIsPowered = (_blockValue.meta & 1) != 0;
+		bool BlockIsTriggered = (_blockValue.meta & 2) != 0;
 		
-		string BlockIsPoweredmsg = BlockIsPowered ? "true" : "false";
-		string BlockIsTriggeredmsg = BlockIsTriggered ? "true" : "false"; 
-		string msg = "XR - BlockValue.meta &2=";
-		msg = String.Concat(msg, BlockIsPoweredmsg);
-		msg = String.Concat(msg, " &3=");
-		msg = String.Concat(msg, BlockIsTriggeredmsg);
-		DebugMsg(msg);
+		
+		DebugMsg(String.Concat("XR BlockMetaIsPowered=", BlockIsPowered  ? "1" : "0"));
+		DebugMsg(String.Concat("ActivateBlock BlockMetaIsTriggered=", BlockIsTriggered  ? "1" : "0"));
+		
+
 		
         flagOnBlockActivated = false; // this disables runtimetoggle
 		if (flagOnBlockActivated)
@@ -134,17 +132,12 @@ public class BlockLogicGateMain : BlockPowered
 		TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
 		if (tileEntityPoweredTrigger != null)
 		{	
-			DebugMsg(String.Concat("XR -> tEPT.IsTriggered1=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));	
+			DebugMsg(String.Concat("XR -> tEPT.IsTriggered1=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
 			// if (Steam.Network.IsServer)
 			// {
 				tileEntityPoweredTrigger.IsTriggered = BlockIsTriggered;
 			// }			
-			DebugMsg(String.Concat("XR -> tEPT.IsTriggered2=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));	
-			//tileEntityPoweredTrigger.ResetTrigger();
-			
-			DebugMsg(String.Concat("XR -> tEPT.IsTriggered3=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));	
-            
-
+			DebugMsg(String.Concat("XR -> tEPT.IsTriggered2=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
 		}
 		// 		
 		TileEntityPowered tileEntityPowered = _world.GetTileEntity(_cIdx, _blockPos) as TileEntityPowered;
@@ -166,7 +159,6 @@ public class BlockLogicGateMain : BlockPowered
             
 			DebugMsg(String.Concat("XR -> tEP.ChildCount=", tileEntityPowered.ChildCount));
 			DebugMsg(String.Concat("XR -> tEP.isPowered=", tileEntityPowered.IsPowered ? "1" : "0"));
-            
             // 
             //tileEntityPowered.;
 			
@@ -355,7 +347,8 @@ public class BlockLogicGateMain : BlockPowered
 		DebugMsg(String.Concat("ActivateBlock isPowered=", isPowered ? "1" : "0"));
 		DebugMsg(String.Concat("ActivateBlock isOn=", isOn ? "1" : "0"));
 		
-		bool hasSecondInput = HasActivePower(_world, _cIdx, _blockPos);
+		bool hasSecondInput = HasActivePower(_world, _cIdx, _blockPos);		
+		DebugMsg(String.Concat("ActivateBlock hasSecondInput=", hasSecondInput ? "1" : "0"));
 		
 		if(hasSecondInput && isPowered){
 			// switch has 2nd input
@@ -381,10 +374,11 @@ public class BlockLogicGateMain : BlockPowered
 		}				
 						
 
-			_blockValue.meta = (byte)(((int)_blockValue.meta & -3) | ((!hasSecondInput) ? 0 : 2));
+			_blockValue.meta = (byte)(((int)_blockValue.meta & -3) | ((!isOn2) ? 0 : 2));
 			_blockValue.meta = (byte)(((int)_blockValue.meta & -2) | ((!isPowered) ? 0 : 1));
 		this.XR(_world, _cIdx, _blockPos, _blockValue, false);
 		_world.SetBlockRPC(_cIdx, _blockPos, _blockValue);
+		
 		return true;
 	}
 
@@ -470,8 +464,9 @@ public class BlockLogicGateMain : BlockPowered
 			}
 		*/
 	}
-    
-    // BlockPressurePlate
+	
+/*
+	// BlockPressurePlate
     public override void OnBlockAdded(WorldBase _world, Chunk _chunk, Vector3i _blockPos, BlockValue _blockValue)
     {
         base.OnBlockAdded(_world, _chunk, _blockPos, _blockValue);
@@ -487,6 +482,7 @@ public class BlockLogicGateMain : BlockPowered
             _chunk.AddTileEntity(tileEntityPowered);
         }
     }
+*/
 	
 	private void SetIndicatorColor(GameObject _obj, Color color)
 	{
