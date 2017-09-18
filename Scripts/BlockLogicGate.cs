@@ -49,17 +49,17 @@ public class BlockLogicGateMain : BlockPowered
 	public override bool OnBlockActivated(int _indexInBlockActivationCommands, WorldBase _world, int _cIdx, Vector3i _blockPos, BlockValue _blockValue, EntityAlive _player)
 	{
         DebugMsg("OnBlockActivated");
+		DebugMsg(String.Concat("OnBlockActivated  _indexInBlockActivationCommands=", _indexInBlockActivationCommands));
 
 			
-		// Get call stack
-		StackTrace stackTrace = new StackTrace();
-		// Get calling method name
-		DebugMsg(String.Concat("OnBlockActivated Caller1 ", stackTrace.GetFrame(1).GetMethod()));
-		DebugMsg(String.Concat("OnBlockActivated Caller2 ", stackTrace.GetFrame(2).GetMethod()));
-		DebugMsg(String.Concat("OnBlockActivated Caller3 ", stackTrace.GetFrame(3).GetMethod()));
-		DebugMsg(String.Concat("OnBlockActivated Caller4 ", stackTrace.GetFrame(4).GetMethod()));
-		DebugMsg(String.Concat("OnBlockActivated Caller5 ", stackTrace.GetFrame(5).GetMethod()));
-		DebugMsg(String.Concat("OnBlockActivated Caller6 ", stackTrace.GetFrame(6).GetMethod()));
+		
+		StackTrace st = new StackTrace(1, true);
+		StackFrame [] stFrames = st.GetFrames();
+
+		for(int i=0; i < stFrames.Length; i++ )
+		{
+		   DebugMsg(String.Concat("OnBlockActivated CallingMethod:",stFrames[i].GetMethod() ));
+		}
 		
 		if (_indexInBlockActivationCommands != 0)
 		{
@@ -76,7 +76,7 @@ public class BlockLogicGateMain : BlockPowered
 			{
 				return false;
 			}
-			//this.XR(_world, _cIdx, _blockPos, _blockValue, true);
+			this.XR(_world, _cIdx, _blockPos, _blockValue, true);
 			return true;
 		}
 	}
@@ -106,28 +106,18 @@ public class BlockLogicGateMain : BlockPowered
 		
 		
 		DebugMsg(String.Concat("XR BlockMetaIsPowered=", BlockIsPowered  ? "1" : "0"));
-		DebugMsg(String.Concat("ActivateBlock BlockMetaIsTriggered=", BlockIsTriggered  ? "1" : "0"));
+		DebugMsg(String.Concat("XR BlockMetaIsTriggered=", BlockIsTriggered  ? "1" : "0"));
 		
 
 		
-        flagOnBlockActivated = false; // this disables runtimetoggle
+        flagOnBlockActivated = false; // this disables toggle
 		if (flagOnBlockActivated)
 		{
 			BlockIsTriggered = !BlockIsTriggered;
 			_blockValue.meta = (byte)(((int)_blockValue.meta & -3) | ((!BlockIsTriggered) ? 0 : 2));
 			_blockValue.meta = (byte)(((int)_blockValue.meta & -2) | ((!BlockIsPowered) ? 0 : 1));
 			_world.SetBlockRPC(_cIdx, _blockPos, _blockValue);
-			if (BlockIsTriggered)
-			{
-				Manager.BroadcastPlay(_blockPos.ToVector3(), "switch_up");
-			}
-			else
-			{
-				Manager.BroadcastPlay(_blockPos.ToVector3(), "switch_down");
-			}
 		}		
-
-		
 
 		TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
 		if (tileEntityPoweredTrigger != null)
@@ -135,7 +125,9 @@ public class BlockLogicGateMain : BlockPowered
 			DebugMsg(String.Concat("XR -> tEPT.IsTriggered1=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
 			// if (Steam.Network.IsServer)
 			// {
-				tileEntityPoweredTrigger.IsTriggered = BlockIsTriggered;
+				
+				// tileEntityPoweredTrigger.IsTriggered = BlockIsTriggered
+				
 			// }			
 			DebugMsg(String.Concat("XR -> tEPT.IsTriggered2=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
 		}
@@ -368,9 +360,10 @@ public class BlockLogicGateMain : BlockPowered
 			{
 			tileEntityPoweredTrigger.IsTriggered = isOn2; //tileEntityPoweredTrigger.
 			
-			//tileEntityPoweredTrigger.Activate(isPowered, hasSecondInput);
+			//tileEntityPoweredTrigger.Activate(isPowered, isOn2);
 			}
 			DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.IsTriggered=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
+
 		}				
 						
 
