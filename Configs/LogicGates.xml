@@ -8,7 +8,7 @@
 				<property name="Model" value="#LogicGate?MainLogicGate"/>
 				<property name="HandleFace" value="Bottom"/>
 				<property name="Collide" value="movement,melee,rocket" />
-				<property name="HandleFace" value="South" />
+				<property name="HandleFace" value="Bottom" />
 				<property name="TakeDelay" value="5" />
 				<property name="AllowRemotePower" value="false" />
 				<property name="EconomicValue" value="48" />
