@@ -122,6 +122,7 @@ public class BlockLogicGateInput : BlockPowered
 		}
 		return false;
 	}
+	
 
 	private bool ZR(WorldBase worldBase, int num, Vector3i blockPos, BlockValue blockValue, bool flagOnBlockActivatedIsEditor)
 	{
