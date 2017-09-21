@@ -99,7 +99,7 @@ public class BlockLogicGateMain : BlockPowered
 			return false;
 		}
 				
-		bool hasSecondInput = HasActivePower(_world, _cIdx, _blockPos);
+		bool[] inputStates = HasActivePower(_world, _cIdx, _blockPos);
 		
 		bool BlockIsPowered = (_blockValue.meta & 1) != 0;
 		bool BlockIsTriggered = (_blockValue.meta & 2) != 0;
@@ -207,9 +207,34 @@ public class BlockLogicGateMain : BlockPowered
 						SetIndicatorColor(Indicator, tempColor);
 						
 					}
-					if (System.Text.RegularExpressions.Regex.Match(Indicator.name, @"Input").Success)
+					//if (System.Text.RegularExpressions.Regex.Match(Indicator.name, @"Input").Success)
+					if(Indicator.name == "IndInput0")
 					{
-						if (hasSecondInput)
+						if (inputStates[0])
+						{
+							tempColor = Color.yellow;
+						}
+						else
+						{
+							tempColor = Color.black;								
+						}	
+						SetIndicatorColor(Indicator, tempColor);
+					}
+					if(Indicator.name == "IndInput1")
+					{
+						if (inputStates[1])
+						{
+							tempColor = Color.yellow;
+						}
+						else
+						{
+							tempColor = Color.black;								
+						}	
+						SetIndicatorColor(Indicator, tempColor);						
+					}
+					if(Indicator.name == "IndInput2")
+					{
+						if (inputStates[2])
 						{
 							tempColor = Color.yellow;
 						}
@@ -221,7 +246,7 @@ public class BlockLogicGateMain : BlockPowered
 					}
 					if (Indicator.name == "IndOutput")
 					{
-						if (hasSecondInput && BlockIsPowered)
+						if (inputStates[0] && BlockIsPowered)
 						{
 							tempColor = Color.blue;
 						}
@@ -243,47 +268,39 @@ public class BlockLogicGateMain : BlockPowered
 		Vector3i inputPosA = _blockPos;
 		Vector3i inputPosB = _blockPos;
 		Vector3i inputPosC = _blockPos;
-		Vector3i inputPosD = _blockPos;
-		Vector3i inputPosE = _blockPos;
-		Vector3i inputPosF = _blockPos;
 		
 		inputPosA.y = _blockPos.y+inputSpace;
-		inputPosB.y = _blockPos.y-inputSpace;
-		inputPosC.x = _blockPos.x+inputSpace;
-		inputPosD.x = _blockPos.x-inputSpace;
-		inputPosE.z = _blockPos.z+inputSpace;
-		inputPosF.z = _blockPos.z-inputSpace;
+		inputPosB.x = _blockPos.x+inputSpace;
+		inputPosC.z = _blockPos.z+inputSpace;
 		
 		Vector3i[] array = new Vector3i[6];
 		array[0] = inputPosA;
 		array[1] = inputPosB;
 		array[2] = inputPosC;
-		array[3] = inputPosD;
-		array[4] = inputPosE;
-		array[5] = inputPosF;
 		return array;		
 	}
 	
-	public static bool HasActivePower(WorldBase _world, int _cIdx, Vector3i _blockPos)
+	public bool[] HasActivePower(WorldBase _world, int _cIdx, Vector3i _blockPos)
 	{
+		bool[] inputStatess = {false, false, false};
 		Vector3i[] locations = PowerInputLocations(_blockPos);
-		foreach (Vector3i vector in locations)
+		for(int i=0; i < inputStatess.Length; i++)
 		{
-			BlockValue inputBlockValue = _world.GetBlock(vector);
+			BlockValue inputBlockValue = _world.GetBlock(locations[i]);
 			Type inputBlockType = Block.list[inputBlockValue.type].GetType();
 			if(inputBlockType == typeof(BlockPowered))
 			{
-				TileEntityPowered tileEntityPowered = (TileEntityPowered)_world.GetTileEntity(_cIdx, vector);
+				TileEntityPowered tileEntityPowered = (TileEntityPowered)_world.GetTileEntity(_cIdx, locations[i]);
 				if (tileEntityPowered != null)
 				{
 					if(tileEntityPowered.IsPowered)
 					{
-						return true;
+						inputStatess[i] = true;
 					}
 				}
 			}
 		}
-		return false;
+		return inputStatess;
 	}
 	
 
@@ -339,10 +356,10 @@ public class BlockLogicGateMain : BlockPowered
 		DebugMsg(String.Concat("ActivateBlock isPowered=", isPowered ? "1" : "0"));
 		DebugMsg(String.Concat("ActivateBlock isOn=", isOn ? "1" : "0"));
 		
-		bool hasSecondInput = HasActivePower(_world, _cIdx, _blockPos);		
-		DebugMsg(String.Concat("ActivateBlock hasSecondInput=", hasSecondInput ? "1" : "0"));
+		bool[] inputStates = HasActivePower(_world, _cIdx, _blockPos);		
+		DebugMsg(String.Concat("ActivateBlock inputStates=", inputStates[0] ? "1" : "0"));
 		
-		if(hasSecondInput && isPowered){
+		if(inputStates[0] && isPowered){
 			// switch has 2nd input
 			isOn2 = true;
 		}
