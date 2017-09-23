@@ -98,8 +98,8 @@ public class BlockLogicGateMain : BlockPowered
 		{
 			return false;
 		}
-				
-		bool[] inputStates = HasActivePower(_world, _cIdx, _blockPos);
+
+		bool[] inputStates = GetInputStates(_world, _cIdx, _blockPos, _blockValue);
 		
 		bool BlockIsPowered = (_blockValue.meta & 1) != 0;
 		bool BlockIsTriggered = (_blockValue.meta & 2) != 0;
@@ -107,8 +107,8 @@ public class BlockLogicGateMain : BlockPowered
 		
 		DebugMsg(String.Concat("XR BlockMetaIsPowered=", BlockIsPowered  ? "1" : "0"));
 		DebugMsg(String.Concat("XR BlockMetaIsTriggered=", BlockIsTriggered  ? "1" : "0"));
-		
 
+		DebugMsg(String.Concat("XR _blockValue.rotation=", _blockValue.rotation));
 		
         flagOnBlockActivated = false; // this disables toggle
 		if (flagOnBlockActivated)
@@ -262,28 +262,59 @@ public class BlockLogicGateMain : BlockPowered
 		return true;
 	}
 	
-	static Vector3i[] PowerInputLocations(Vector3i _blockPos)
+	static Vector3i[] GetInputLocations(Vector3i _blockPos, BlockValue _blockValue)
 	{
-		int inputSpace = 1;
-		Vector3i inputPosA = _blockPos;
-		Vector3i inputPosB = _blockPos;
-		Vector3i inputPosC = _blockPos;
+		Vector3i inputPosA = Vector3i.zero;
+		Vector3i inputPosB = Vector3i.zero;
+		Vector3i inputPosC = Vector3i.zero;
 		
-		inputPosA.y = _blockPos.y+inputSpace;
-		inputPosB.x = _blockPos.x+inputSpace;
-		inputPosC.z = _blockPos.z+inputSpace;
+		switch(_blockValue.rotation)
+		{
+			case 0:
+				inputPosB = _blockPos;
+				inputPosB.x = _blockPos.x-1;				
+				inputPosA = inputPosB;
+				inputPosA.z = inputPosB.z+1;
+				inputPosC = inputPosB;		
+				inputPosC.z = inputPosB.z-1;
+				break;
+			case 1:
+				inputPosB = _blockPos;
+				inputPosB.z = _blockPos.z+1;		
+				inputPosA = inputPosB;
+				inputPosA.x = inputPosB.x+1;
+				inputPosC = inputPosB;		
+				inputPosC.x = inputPosB.x-1;
+				break;
+			case 2:
+				inputPosB = _blockPos;
+				inputPosB.x = _blockPos.x+1;				
+				inputPosA = inputPosB;
+				inputPosA.z = inputPosB.z-1;
+				inputPosC = inputPosB;		
+				inputPosC.z = inputPosB.z+1;
+				break;	
+			case 3:
+				inputPosB = _blockPos;
+				inputPosB.z = _blockPos.z-1;		
+				inputPosA = inputPosB;
+				inputPosA.x = inputPosB.x-1;     
+				inputPosC = inputPosB;		
+				inputPosC.x = inputPosB.x+1;
+				break;
+		}
 		
-		Vector3i[] array = new Vector3i[6];
+		Vector3i[] array = new Vector3i[3];
 		array[0] = inputPosA;
 		array[1] = inputPosB;
 		array[2] = inputPosC;
 		return array;		
 	}
-	
-	public bool[] HasActivePower(WorldBase _world, int _cIdx, Vector3i _blockPos)
+ 
+	public bool[] GetInputStates(WorldBase _world, int _cIdx, Vector3i _blockPos, BlockValue _blockValue)
 	{
 		bool[] inputStatess = {false, false, false};
-		Vector3i[] locations = PowerInputLocations(_blockPos);
+		Vector3i[] locations = GetInputLocations(_blockPos, _blockValue);
 		for(int i=0; i < inputStatess.Length; i++)
 		{
 			BlockValue inputBlockValue = _world.GetBlock(locations[i]);
@@ -355,8 +386,8 @@ public class BlockLogicGateMain : BlockPowered
 		
 		DebugMsg(String.Concat("ActivateBlock isPowered=", isPowered ? "1" : "0"));
 		DebugMsg(String.Concat("ActivateBlock isOn=", isOn ? "1" : "0"));
-		
-		bool[] inputStates = HasActivePower(_world, _cIdx, _blockPos);		
+
+		bool[] inputStates = GetInputStates(_world, _cIdx, _blockPos, _blockValue);
 		DebugMsg(String.Concat("ActivateBlock inputStates=", inputStates[0] ? "1" : "0"));
 		
 		if(inputStates[0] && isPowered){
