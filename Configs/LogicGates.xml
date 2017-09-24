@@ -3,10 +3,9 @@
 		<append xpath="/blocks">
 			<block id="2042" name="LogicGateMain">		
 				<property name="Extends" value="ceilingLight02_player" />
-				<property name="CustomIcon" value="openSign" />
+				<property name="CustomIcon" value="LogicGateMain" />
 				<property name="Class" value="LogicGateMain, Mods" />
 				<property name="Model" value="#LogicGate?MainLogicGate"/>
-				<property name="HandleFace" value="Bottom"/>
 				<property name="Collide" value="movement,melee,rocket" />
 				<property name="HandleFace" value="Bottom" />
 				<property name="TakeDelay" value="5" />
