@@ -1,6 +1,7 @@
 using Audio;
 using GUI_2;
 using System;
+using System.Linq;
 using UnityEngine;
 
 using System.Diagnostics;
@@ -44,15 +45,17 @@ public class BlockLogicGateMain : BlockPowered
 	public override bool OnBlockActivated(int _indexInBlockActivationCommands, WorldBase _world, int _cIdx, Vector3i _blockPos, BlockValue _blockValue, EntityAlive _player)
 	{
         DebugMsg("OnBlockActivated");
-		DebugMsg(String.Concat("OnBlockActivated  _indexInBlockActivationCommands=", _indexInBlockActivationCommands));
+		//DebugMsg(String.Concat("OnBlockActivated  _indexInBlockActivationCommands=", _indexInBlockActivationCommands));
 
-		StackTrace st = new StackTrace(1, true);
-		StackFrame [] stFrames = st.GetFrames();
-		for(int i=0; i < stFrames.Length; i++ )
-		{
-		   DebugMsg(String.Concat("OnBlockActivated CallingMethod:",stFrames[i].GetMethod() ));
-		}
-		
+		/* 
+			StackTrace st = new StackTrace(1, true);
+			StackFrame [] stFrames = st.GetFrames();
+			for(int i=0; i < stFrames.Length; i++ )
+			{
+			   DebugMsg(String.Concat("OnBlockActivated CallingMethod:",stFrames[i].GetMethod() ));
+			}
+		*/	
+ 
 		if (_indexInBlockActivationCommands != 0)
 		{
 			if (_indexInBlockActivationCommands != 1)
@@ -175,7 +178,7 @@ public class BlockLogicGateMain : BlockPowered
 				// tileEntityPoweredTrigger.IsTriggered = BlockIsTriggered
 				
 			// }			
-			DebugMsg(String.Concat("XR -> tEPT.IsTriggered2=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
+			//DebugMsg(String.Concat("XR -> tEPT.IsTriggered2=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
 		}
 		
 		/* 		
@@ -384,24 +387,24 @@ public class BlockLogicGateMain : BlockPowered
 		base.OnBlockEntityTransformAfterActivated(_world, _blockPos, _cIdx, _blockValue, _ebcd);
 	}
 
-	public override bool ActivateBlock(WorldBase _world, int _cIdx, Vector3i _blockPos, BlockValue _blockValue, bool isOn, bool isPowered)
+	public override bool ActivateBlock(WorldBase _world, int _cIdx, Vector3i _blockPos, BlockValue _blockValue, bool outputStateOld, bool isPowered)
 	{
         DebugMsg("ActivateBlock");
-		bool isOn2 = false;
-		bool isOn3 = false;
+		bool outputStateRaw = false;
+		bool outputStateNew = false;
 		bool[] inputStates = GetInputStates(_world, _cIdx, _blockPos, _blockValue);
 		bool outputMode =  getBitBool(_blockValue.meta, metaIndexOutMode);
 			
-		StackTrace st = new StackTrace(1, true);
-		StackFrame [] stFrames = st.GetFrames();
-		for(int i=0; i < stFrames.Length; i++ )
-		{
-		   DebugMsg(String.Concat("OnBlockActivated CallingMethod:",stFrames[i].GetMethod() ));
-		}
+		// StackTrace st = new StackTrace(1, true);
+		// StackFrame [] stFrames = st.GetFrames();
+		// for(int i=0; i < stFrames.Length; i++ )
+		// {
+		   // DebugMsg(String.Concat("OnBlockActivated CallingMethod:",stFrames[i].GetMethod() ));
+		// }
 		
 		DebugMsg(String.Concat("ActivateBlock isPowered=", isPowered ? "1" : "0"));
-		DebugMsg(String.Concat("ActivateBlock isOn=", isOn ? "1" : "0"));
-		DebugMsg(String.Concat("ActivateBlock inputStates=", inputStates[0] ? "1" : "0"));
+		DebugMsg(String.Concat("ActivateBlock outputStateOld=", outputStateOld ? "1" : "0"));
+		DebugMsg(String.Concat("ActivateBlock inputStates=", string.Join("", inputStates.Select(b => b ? "1" : "0").ToArray())));
 		DebugMsg(String.Concat("ActivateBlock outputMode=", outputMode ? "1" : "0"));
 		
 
@@ -413,41 +416,41 @@ public class BlockLogicGateMain : BlockPowered
         }
 		
 		if(inputOn && isPowered){
-			isOn2 = true;
+			outputStateRaw = true;
 		}
 		else
 		{
-			isOn2 = false;
+			outputStateRaw = false;
 		}		
-		DebugMsg(String.Concat("ActivateBlock isOn2=", isOn2 ? "1" : "0"));		
+		DebugMsg(String.Concat("ActivateBlock outputStateRaw=", outputStateRaw ? "1" : "0"));		
 					
 		if(outputMode)
 		{
-			isOn3 = !isOn2;
+			outputStateNew = !outputStateRaw;
 		}
 		else
 		{
-			isOn3 = isOn2;
+			outputStateNew = outputStateRaw;
 		}
-
-		TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
-		if (tileEntityPoweredTrigger != null)
+		DebugMsg(String.Concat("ActivateBlock outputStateNew=", outputStateNew ? "1" : "0"));		
+		
+		if(outputStateOld != outputStateNew)
 		{
-			if(isOn != isOn3)
+				
+			TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
+			if (tileEntityPoweredTrigger != null)
 			{
-			tileEntityPoweredTrigger.IsTriggered = isOn3; //tileEntityPoweredTrigger.
-			
-			//tileEntityPoweredTrigger.Activate(isPowered, isOn2);
+
+				tileEntityPoweredTrigger.IsTriggered = outputStateNew; //tileEntityPoweredTrigger.
+				DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.IsTriggered=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
 			}
-			DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.IsTriggered=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
+			_blockValue.meta = setBoolBit(_blockValue.meta, 1, outputStateNew); //(byte)(((int)_blockValue.meta & -3) | ((!outputStateNew) ? 0 : 2));
 
 		}
+		
 		_blockValue.meta = setBoolBit(_blockValue.meta, 0, isPowered); //(byte)(((int)_blockValue.meta & -2) | ((!isPowered) ? 0 : 1));
-		_blockValue.meta = setBoolBit(_blockValue.meta, 1, isOn3); //(byte)(((int)_blockValue.meta & -3) | ((!isOn3) ? 0 : 2));
-
 		_world.SetBlockRPC(_cIdx, _blockPos, _blockValue);		
 		this.XR(_world, _cIdx, _blockPos, _blockValue);
-		
 		return true;
 	}
 
