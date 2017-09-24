@@ -8,6 +8,9 @@
 				<property name="Model" value="#LogicGate?MainLogicGate"/>
 				<property name="Collide" value="movement,melee,rocket" />
 				<property name="HandleFace" value="Bottom" />
+				<property name="OnlySimpleRotations" value="true"/>
+				<!-- <property name="Place" value="Door"/> -->
+				<!-- <property name="PlaceEverywhere" value="false"/>  -->
 				<property name="TakeDelay" value="5" />
 				<property name="AllowRemotePower" value="false" />
 				<property name="EconomicValue" value="48" />

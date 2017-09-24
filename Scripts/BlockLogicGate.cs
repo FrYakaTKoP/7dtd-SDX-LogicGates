@@ -558,4 +558,5 @@ public class BlockLogicGateMain : BlockPowered
 		Renderer rend =_obj.GetComponentInChildren<Renderer>();
 		rend.material.SetColor("_Emission", color);
 	}
+	
 }
