@@ -72,7 +72,7 @@ public class BlockLogicGateMain : BlockPowered
 				return false;
 			}
 			ToggleOutputMode(_world, _cIdx, _blockPos, _blockValue);
-			//this.XR(_world, _cIdx, _blockPos, _blockValue);
+			this.XR(_world, _cIdx, _blockPos, _blockValue);
 			return true;
 		}
 	}
@@ -434,8 +434,8 @@ public class BlockLogicGateMain : BlockPowered
 		}
 		DebugMsg(String.Concat("ActivateBlock outputStateNew=", outputStateNew ? "1" : "0"));		
 		
-		if(outputStateOld != outputStateNew)
-		{
+		//if(outputStateOld != outputStateNew)
+		//{
 				
 			TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
 			if (tileEntityPoweredTrigger != null)
@@ -446,7 +446,7 @@ public class BlockLogicGateMain : BlockPowered
 			}
 			_blockValue.meta = setBoolBit(_blockValue.meta, 1, outputStateNew); //(byte)(((int)_blockValue.meta & -3) | ((!outputStateNew) ? 0 : 2));
 
-		}
+		//}
 		
 		_blockValue.meta = setBoolBit(_blockValue.meta, 0, isPowered); //(byte)(((int)_blockValue.meta & -2) | ((!isPowered) ? 0 : 1));
 		_world.SetBlockRPC(_cIdx, _blockPos, _blockValue);		
