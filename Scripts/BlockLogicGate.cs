@@ -210,10 +210,11 @@ public class BlockLogicGateMain : BlockPowered
 		Transform[] Indicators = IndicatorsObj.GetComponentsInChildren<Transform>();
 		if (Indicators != null)
 		{
+			GameObject Indicator;
+			Color tempColor = Color.black;
 			for (int i = 0; i < Indicators.Length; i++)
 			{
-				GameObject Indicator = Indicators[i].gameObject;
-				Color tempColor = Color.black;
+				Indicator = Indicators[i].gameObject;
 				if (Indicator.name == "IndMainPower")
 				{
 					if (BlockIsPowered)
