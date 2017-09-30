@@ -118,6 +118,7 @@ public class BlockLogicGateInput : BlockPowered
 			if (tileEntityPoweredBlock != null)
 			{
 				tileEntityPoweredBlock.IsToggled = !tileEntityPoweredBlock.IsToggled;
+				DebugMsg(String.Concat("IsToggled changed =", tileEntityPoweredBlock.IsToggled));
 			}
 		}
 		return false;
@@ -156,17 +157,6 @@ public class BlockLogicGateInput : BlockPowered
 				blockValue.meta = (byte)(((int)blockValue.meta & -3) | ((!flag2) ? 0 : 2));
 				worldBase.SetBlockRPC(num, blockPos, blockValue);
 			}
-			/*
-				Transform transform = blockEntity.transform.Find("MainLight");
-				if (transform != null)
-				{
-					LightLOD component = transform.GetComponent<LightLOD>();
-					if (component != null)
-					{
-						component.SwitchOnOff(flag2);
-					}
-				}
-			*/
 			return true;
 		}
 		return false;
@@ -205,6 +195,8 @@ public class BlockLogicGateInput : BlockPowered
 			}
 		*/	
 		
+		bool BlockIsToggled = (_blockValue.meta & 2) != 0;
+
 		DebugMsg(String.Concat("ActivateBlock isPowered=", isPowered ? "true" : "false"));
 		DebugMsg(String.Concat("ActivateBlock isOn=", isOn ? "true" : "false"));
 		
@@ -226,12 +218,25 @@ public class BlockLogicGateInput : BlockPowered
 						
 			if (isPowered)
 			{
-				DebugMsg("ActivateBlock tempColor = Color.green;");
-				tempColor = Color.green;
+				if(BlockIsToggled)
+				{
+					tempColor = Color.green;
+				}
+				else
+				{
+					tempColor = Color.red;
+				}
 			}
 			else
 			{
-				tempColor = Color.black;								
+				if(BlockIsToggled)
+				{
+					tempColor = Color.black;
+				}
+				else
+				{
+					tempColor = Color.yellow;
+				}
 			}	
 			SetIndicatorColor(IndicatorsObj, tempColor);
 			
@@ -286,7 +291,7 @@ public class BlockLogicGateInput : BlockPowered
 	
 	private void SetIndicatorColor(GameObject _obj, Color color)
 	{
-		DebugMsg(String.Concat("SetIndicatorColor green=", (color == Color.green)? "1" : "0")); 
+		//DebugMsg(String.Concat("SetIndicatorColor =", ()? "1" : "0")); 
 				
 		Renderer rend =_obj.GetComponentInChildren<Renderer>();
 		
@@ -301,12 +306,7 @@ public class BlockLogicGateInput : BlockPowered
 		//DebugMsg(String.Concat("SetIndicatorColor renderer.material. hasProp:_EmissionColor=", rend.material.HasProperty("_EmissionColor") ? "1" : "0" )); // true
 		//DebugMsg(String.Concat("SetIndicatorColor renderer.material. hasProp:_Color=", rend.material.HasProperty("_Color") ? "1" : "0" )); // true
 		//DebugMsg(String.Concat("SetIndicatorColor renderer.material. hasProp:_SpecColor=", rend.material.HasProperty("_SpecColor") ? "1" : "0" )); // true
-		
-		//rend.material.color =  color;
-		//rend.material.EnableKeyword("_EMISSION");
-		//rend.material.SetColor("_Emission", color);
-		//rend.material.SetColor("_Color", color);
-		//rend.material.color = color;
+
 		
 		Light li =_obj.GetComponentInChildren<Light>();
 		if(li == null )
