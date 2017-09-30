@@ -308,77 +308,141 @@ public class BlockLogicGateMain : BlockPowered
 	}
 	
 	
-	static Vector3i[] GetInputLocations(Vector3i _blockPos, BlockValue _blockValue)
+	static Vector3i[][] GetInputLocations(Vector3i _blockPos, BlockValue _blockValue)
 	{
-		Vector3i inputPosA = Vector3i.zero;
-		Vector3i inputPosB = Vector3i.zero;
-		Vector3i inputPosC = Vector3i.zero;
+		Vector3i inputPosA0 = Vector3i.zero;
+		Vector3i inputPosA1 = Vector3i.zero;
+		Vector3i inputPosA2 = Vector3i.zero;
+		Vector3i inputPosB0 = Vector3i.zero;
+		Vector3i inputPosB1 = Vector3i.zero;
+		Vector3i inputPosB2 = Vector3i.zero;
+		Vector3i inputPosC0 = Vector3i.zero;
+		Vector3i inputPosC1 = Vector3i.zero;
+		Vector3i inputPosC2 = Vector3i.zero;
 		
 		switch(_blockValue.rotation)
 		{
-			case 0:
-				inputPosB = _blockPos;
-				inputPosB.x = _blockPos.x-1;				
-				inputPosA = inputPosB;
-				inputPosA.z = inputPosB.z+1;
-				inputPosC = inputPosB;		
-				inputPosC.z = inputPosB.z-1;
-				break;
-			case 1:
-				inputPosB = _blockPos;
-				inputPosB.z = _blockPos.z+1;		
-				inputPosA = inputPosB;
-				inputPosA.x = inputPosB.x+1;
-				inputPosC = inputPosB;		
-				inputPosC.x = inputPosB.x-1;
-				break;
-			case 2:
-				inputPosB = _blockPos;
-				inputPosB.x = _blockPos.x+1;				
-				inputPosA = inputPosB;
-				inputPosA.z = inputPosB.z-1;
-				inputPosC = inputPosB;		
-				inputPosC.z = inputPosB.z+1;
-				break;	
-			case 3:
-				inputPosB = _blockPos;
-				inputPosB.z = _blockPos.z-1;		
-				inputPosA = inputPosB;
-				inputPosA.x = inputPosB.x-1;     
-				inputPosC = inputPosB;		
-				inputPosC.x = inputPosB.x+1;
-				break;
+		case 0:
+			inputPosB0 = _blockPos;
+			inputPosB1 = _blockPos;
+			inputPosB2 = _blockPos;
+			inputPosB0.x = _blockPos.x-1;
+			inputPosB1.x = _blockPos.x-2;
+			inputPosB2.x = _blockPos.x-3;
+			inputPosA0 = inputPosB0;
+			inputPosA1 = inputPosB1;
+			inputPosA2 = inputPosB2;
+			inputPosA0.z = inputPosB0.z+1;
+			inputPosA1.z = inputPosB1.z+1;
+			inputPosA2.z = inputPosB2.z+1;
+			inputPosC0 = inputPosB0;
+			inputPosC1 = inputPosB1;
+			inputPosC2 = inputPosB2;
+			inputPosC0.z = inputPosB0.z-1;
+			inputPosC1.z = inputPosB1.z-1;
+			inputPosC2.z = inputPosB2.z-1;
+			break;
+		case 1:
+			inputPosB0 = _blockPos;
+			inputPosB0.z = _blockPos.z+1;
+			inputPosB1.z = _blockPos.z+2;
+			inputPosB2.z = _blockPos.z+3;
+			inputPosA0 = inputPosB0;
+			inputPosA1 = inputPosB1;
+			inputPosA2 = inputPosB2;
+			inputPosA0.x = inputPosB0.x+1;
+			inputPosA1.x = inputPosB1.x+1;
+			inputPosA2.x = inputPosB2.x+1;
+			inputPosC0 = inputPosB0;
+			inputPosC1 = inputPosB1;
+			inputPosC2 = inputPosB2;
+			inputPosC0.x = inputPosB0.x-1;
+			inputPosC1.x = inputPosB1.x-1;
+			inputPosC2.x = inputPosB2.x-1;
+			break;
+		case 2:
+			inputPosB0 = _blockPos;
+			inputPosB0.x = _blockPos.x+1;
+			inputPosB1.x = _blockPos.x+2;
+			inputPosB2.x = _blockPos.x+3;
+			inputPosA0 = inputPosB0;
+			inputPosA1 = inputPosB1;
+			inputPosA2 = inputPosB2;
+			inputPosA0.z = inputPosB0.z-1;
+			inputPosA1.z = inputPosB1.z-1;
+			inputPosA2.z = inputPosB2.z-1;
+			inputPosC0 = inputPosB0;
+			inputPosC1 = inputPosB1;
+			inputPosC2 = inputPosB2;
+			inputPosC0.z = inputPosB0.z+1;
+			inputPosC1.z = inputPosB1.z+1;
+			inputPosC2.z = inputPosB2.z+1;
+			break;
+		case 3:
+			inputPosB0 = _blockPos;
+			inputPosB0.z = _blockPos.z-1;
+			inputPosB1.z = _blockPos.z-2;
+			inputPosB2.z = _blockPos.z-3;
+			inputPosA0 = inputPosB0;
+			inputPosA1 = inputPosB1;
+			inputPosA2 = inputPosB2;
+			inputPosA0.x = inputPosB0.x-1;
+			inputPosA1.x = inputPosB1.x-1;
+			inputPosA2.x = inputPosB2.x-1;
+			inputPosC0 = inputPosB0;
+			inputPosC1 = inputPosB1;
+			inputPosC2 = inputPosB2;
+			inputPosC0.x = inputPosB0.x+1;
+			inputPosC1.x = inputPosB1.x+1;
+			inputPosC2.x = inputPosB2.x+1;
+			break;
 		}
+
 		
-		Vector3i[] array = new Vector3i[3];
-		array[0] = inputPosA;
-		array[1] = inputPosB;
-		array[2] = inputPosC;
-		return array;		
+		Vector3i[][] locations = new Vector3i[3][];
+		locations[0] = new Vector3i[] {inputPosA0 , inputPosB0, inputPosC0};
+		locations[1] = new Vector3i[] {inputPosA1 , inputPosB1, inputPosC1};
+		locations[2] = new Vector3i[] {inputPosA2 , inputPosB2, inputPosC2};
+		return locations;		
 	}
  
 	public bool[] GetInputStates(WorldBase _world, int _cIdx, Vector3i _blockPos, BlockValue _blockValue)
 	{
+		Vector3i[][] locations = GetInputLocations(_blockPos, _blockValue);
+		
 		bool[] inputStates = {false, false, false};
-		Vector3i[] locations = GetInputLocations(_blockPos, _blockValue);
-		for(int i=0; i < inputStates.Length; i++)
+		for(int i=0; i < locations.Length; i++)
 		{
-			BlockValue inputBlockValue = _world.GetBlock(locations[i]);
-			Type inputBlockType = Block.list[inputBlockValue.type].GetType();
-			if(inputBlockType == typeof(BlockPowered))
-			{
-				TileEntityPowered tileEntityPowered = (TileEntityPowered)_world.GetTileEntity(_cIdx, locations[i]);
-				if (tileEntityPowered != null)
+			for(int x=0; x < 3; x++)
+			{				
+				BlockValue inputBlockValue = _world.GetBlock(locations[i][x]);
+				Type inputBlockType = Block.list[inputBlockValue.type].GetType();
+				if(inputBlockType == typeof(BlockLogicGateInput))
 				{
-					if(tileEntityPowered.IsPowered)
+					TileEntityPoweredBlock _te = (TileEntityPoweredBlock)_world.GetTileEntity(_cIdx, locations[i][x]);
+					if (_te != null)
 					{
-						inputStates[i] = true;
+						if(_te.IsPowered)
+						{
+							if(_te.IsToggled) 
+							{
+								inputStates[x] =  true;	
+							}
+						}
+						else
+						{
+							if(!_te.IsToggled) 
+							{
+								inputStates[x] =  true;	
+							}
+						}
 					}
 				}
-			}
+			}			
 		}
 		return inputStates;
 	}
+
 	
 
 	public override void OnBlockEntityTransformAfterActivated(WorldBase _world, Vector3i _blockPos, int _cIdx, BlockValue _blockValue, BlockEntityData _ebcd)
