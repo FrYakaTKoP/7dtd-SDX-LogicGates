@@ -19,7 +19,7 @@
 			<block id="2043" name="logicGateInput">
 				<property name="Class" value="LogicGateInput, Mods" />
 				<property name="Extends" value="electricwirerelay" />
-				<property name="RequiredPower" value="1" />			
+				<property name="RequiredPower" value="0" />			
 				<property name="CustomIcon" value="electricwirerelay" />
 			</block>
 		<!--
