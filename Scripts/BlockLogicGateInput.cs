@@ -18,7 +18,7 @@ public class BlockLogicGateInput : BlockPowered
 		new BlockActivationCommand("take", "hand", false)
 	};
 	
-	private bool showDebugLog = true;
+	private bool showDebugLog = false;
 
 	public void DebugMsg(string msg)
 	{
@@ -200,72 +200,44 @@ public class BlockLogicGateInput : BlockPowered
 		DebugMsg(String.Concat("ActivateBlock isPowered=", isPowered ? "true" : "false"));
 		DebugMsg(String.Concat("ActivateBlock isOn=", isOn ? "true" : "false"));
 		
-		BlockEntityData _ebcd = ((World)_world).ChunkClusters[_cIdx].GetBlockEntity(_blockPos);
-		if (_ebcd != null && _ebcd.transform != null && _ebcd.transform.gameObject != null)
-		{	
+		DebugMsg(String.Concat("ActivateBlock BlockmetaisToggled=", BlockIsToggled ? "true" : "false"));
+		
+		// BlockEntityData _ebcd = ((World)_world).ChunkClusters[_cIdx].GetBlockEntity(_blockPos);
+		// if (_ebcd != null && _ebcd.transform != null && _ebcd.transform.gameObject != null)
+		// {	
 			// foreach( Transform trans in _ebcd.transform) 
 			// {
 				// DebugMsg(String.Concat("ActivateBlock parent.transform.name=", trans.name ));
-			// }
-			//GameObject IndicatorsObj = _ebcd.transform.Find("Position").gameObject;			
-			GameObject IndicatorsObj = _ebcd.transform.Find("WireOffset").gameObject;			
-			
-			if(IndicatorsObj == null)
-			{
-				DebugMsg("IndicatorsObj is null");
-			}
-			Color tempColor = Color.black;
+			// }				
+
+			//  //GameObject positionObj =  _ebcd.transform.Find("Position").gameObject;
+			// GameObject wireOffsetObj = _ebcd.transform.Find("WireOffset").gameObject;	
+			// Color tempColor = Color.black;
 						
-			if (isPowered)
-			{
-				if(BlockIsToggled)
-				{
-					tempColor = Color.green;
-				}
-				else
-				{
-					tempColor = Color.red;
-				}
-			}
-			else
-			{
-				if(BlockIsToggled)
-				{
-					tempColor = Color.black;
-				}
-				else
-				{
-					tempColor = Color.yellow;
-				}
-			}	
-			SetIndicatorColor(IndicatorsObj, tempColor);
-			
-			// Transform[] Indicators = IndicatorsObj.GetComponentsInChildren<Transform>();
-			// if (Indicators != null)
+			// if (isPowered)
 			// {
-				// GameObject Indicator = Indicators[0].gameObject;;
-				// Color tempColor = Color.black;
-				// for (int i = 0; i < Indicators.Length; i++)
+				// if(BlockIsToggled)
 				// {
-					// DebugMsg(String.Concat("ActivateBlock Indicator.name=", Indicator.name ));
-					// Indicator = Indicators[i].gameObject;					
-					// if (Indicator.name == "LOD0")
-					// {
-						// DebugMsg("ActivateBlock found LOD0");
-						// if (isPowered)
-						// {
-							// DebugMsg("ActivateBlock tempColor = Color.green;");
-							// tempColor = Color.green;
-						// }
-						// else
-						// {
-							// tempColor = Color.black;								
-						// }	
-					// }
+					// tempColor = Color.yellow;
 				// }
-				// SetIndicatorColor(Indicator, tempColor);
+				// else
+				// {
+					// tempColor = Color.black;
+				// }
 			// }
-		}
+			// else
+			// {
+				// if(BlockIsToggled)
+				// {
+					// tempColor = Color.black;
+				// }
+				// else
+				// {
+					// tempColor = Color.yellow;
+				// }
+			// }
+			// AddGlow(wireOffsetObj, tempColor, 1, 1);
+		// }
 		
         
 		_blockValue.meta = (byte)(((int)_blockValue.meta & -3) | ((!isOn) ? 0 : 2));
@@ -288,45 +260,5 @@ public class BlockLogicGateInput : BlockPowered
 			PowerItemType = powerItemType
 		};
 	}
-	
-	private void SetIndicatorColor(GameObject _obj, Color color)
-	{
-		//DebugMsg(String.Concat("SetIndicatorColor =", ()? "1" : "0")); 
-				
-		Renderer rend =_obj.GetComponentInChildren<Renderer>();
-		
-		// string[] kws = rend.material.shaderKeywords;
-		// foreach ( string keyword in kws)
-		// {
-			// DebugMsg(String.Concat("SetIndicatorColor renderer.material. keyword:", keyword)); 
-		// }
-		
-		// DebugMsg(String.Concat("SetIndicatorColor renderer.material.name=", rend.material.name ));
-		// DebugMsg(String.Concat("SetIndicatorColor renderer.material.shader.name=", rend.material.shader.name ));		
-		//DebugMsg(String.Concat("SetIndicatorColor renderer.material. hasProp:_EmissionColor=", rend.material.HasProperty("_EmissionColor") ? "1" : "0" )); // true
-		//DebugMsg(String.Concat("SetIndicatorColor renderer.material. hasProp:_Color=", rend.material.HasProperty("_Color") ? "1" : "0" )); // true
-		//DebugMsg(String.Concat("SetIndicatorColor renderer.material. hasProp:_SpecColor=", rend.material.HasProperty("_SpecColor") ? "1" : "0" )); // true
 
-		
-		Light li =_obj.GetComponentInChildren<Light>();
-		if(li == null )
-		{
-			li = _obj.AddComponent<Light>();
-			li.range = 1;
-			li.intensity = 1;
-		}
-		if(color == Color.green)
-		{
-			//rend.material.mainTexture = null;				
-			li.enabled = true;
-		}
-		else
-		{				
-			li.enabled = false;
-		}
-		li.color = color;
-		
-
-
-	}
 }

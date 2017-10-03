@@ -118,19 +118,19 @@ public class BlockLogicGateMain : BlockPowered
 		return (b & mask) != 0;
 	}
 	
-		private byte setBoolBit(byte b, int i, bool val)
-        {
-            byte mask = (byte)(1 << i);
-            if (val)
-            {
-                b |= mask;
-            }
-            else if(!val)
-            {
-                b &= (byte)~mask; 
-            }
-            return b;
-        }
+	private byte setBoolBit(byte b, int i, bool val)
+	{
+		byte mask = (byte)(1 << i);
+		if (val)
+		{
+			b |= mask;
+		}
+		else if(!val)
+		{
+			b &= (byte)~mask; 
+		}
+		return b;
+	}
 
 	// 
 	private bool XR(WorldBase _world, int _cIdx, Vector3i _blockPos, BlockValue _blockValue)
@@ -320,12 +320,13 @@ public class BlockLogicGateMain : BlockPowered
 		Vector3i inputPosC1 = Vector3i.zero;
 		Vector3i inputPosC2 = Vector3i.zero;
 		
+		inputPosB0 = _blockPos;
+		inputPosB1 = _blockPos;
+		inputPosB2 = _blockPos;
+		
 		switch(_blockValue.rotation)
 		{
 		case 0:
-			inputPosB0 = _blockPos;
-			inputPosB1 = _blockPos;
-			inputPosB2 = _blockPos;
 			inputPosB0.x = _blockPos.x-1;
 			inputPosB1.x = _blockPos.x-2;
 			inputPosB2.x = _blockPos.x-3;
@@ -343,7 +344,6 @@ public class BlockLogicGateMain : BlockPowered
 			inputPosC2.z = inputPosB2.z-1;
 			break;
 		case 1:
-			inputPosB0 = _blockPos;
 			inputPosB0.z = _blockPos.z+1;
 			inputPosB1.z = _blockPos.z+2;
 			inputPosB2.z = _blockPos.z+3;
@@ -361,7 +361,6 @@ public class BlockLogicGateMain : BlockPowered
 			inputPosC2.x = inputPosB2.x-1;
 			break;
 		case 2:
-			inputPosB0 = _blockPos;
 			inputPosB0.x = _blockPos.x+1;
 			inputPosB1.x = _blockPos.x+2;
 			inputPosB2.x = _blockPos.x+3;
@@ -379,7 +378,6 @@ public class BlockLogicGateMain : BlockPowered
 			inputPosC2.z = inputPosB2.z+1;
 			break;
 		case 3:
-			inputPosB0 = _blockPos;
 			inputPosB0.z = _blockPos.z-1;
 			inputPosB1.z = _blockPos.z-2;
 			inputPosB2.z = _blockPos.z-3;
@@ -400,23 +398,30 @@ public class BlockLogicGateMain : BlockPowered
 
 		
 		Vector3i[][] locations = new Vector3i[3][];
-		locations[0] = new Vector3i[] {inputPosA0 , inputPosB0, inputPosC0};
-		locations[1] = new Vector3i[] {inputPosA1 , inputPosB1, inputPosC1};
-		locations[2] = new Vector3i[] {inputPosA2 , inputPosB2, inputPosC2};
+		// locations[0] = new Vector3i[] {inputPosA0 , inputPosB0, inputPosC0};
+		// locations[1] = new Vector3i[] {inputPosA1 , inputPosB1, inputPosC1};
+		// locations[2] = new Vector3i[] {inputPosA2 , inputPosB2, inputPosC2};
+		locations[0] = new Vector3i[] {inputPosA0 , inputPosA1, inputPosA2};
+		locations[1] = new Vector3i[] {inputPosB0 , inputPosB1, inputPosB2};
+		locations[2] = new Vector3i[] {inputPosC0 , inputPosC1, inputPosC2};
 		return locations;		
 	}
  
 	public bool[] GetInputStates(WorldBase _world, int _cIdx, Vector3i _blockPos, BlockValue _blockValue)
-	{
+	{		
+		//DebugMsg("GetInputStates");
 		Vector3i[][] locations = GetInputLocations(_blockPos, _blockValue);
 		
 		bool[] inputStates = {false, false, false};
 		for(int i=0; i < locations.Length; i++)
-		{
+		{	
+			DebugMsg(String.Concat("GetInputStates newInputRow=", i));
+			int nonGateBlocks = 0;
 			for(int x=0; x < 3; x++)
 			{				
 				BlockValue inputBlockValue = _world.GetBlock(locations[i][x]);
 				Type inputBlockType = Block.list[inputBlockValue.type].GetType();
+				DebugMsg(String.Concat("GetInputStates type=", inputBlockType.ToString()));
 				if(inputBlockType == typeof(BlockLogicGateInput))
 				{
 					TileEntityPoweredBlock _te = (TileEntityPoweredBlock)_world.GetTileEntity(_cIdx, locations[i][x]);
@@ -426,19 +431,29 @@ public class BlockLogicGateMain : BlockPowered
 						{
 							if(_te.IsToggled) 
 							{
-								inputStates[x] =  true;	
+								inputStates[i] =  true;	
 							}
 						}
 						else
 						{
 							if(!_te.IsToggled) 
 							{
-								inputStates[x] =  true;	
+								inputStates[i] =  true;	
 							}
 						}
 					}
 				}
-			}			
+				else
+				{
+					nonGateBlocks++;
+					//DebugMsg(String.Concat("GetInputStates nonGateBlocks=", nonGateBlocks));
+				}
+			}
+			if(nonGateBlocks == locations.Length)
+			{
+				inputStates[i] =  true;	
+			}
+			DebugMsg(String.Concat("GetInputStates inputRow=",  inputStates[i] ? "1" : "0"));
 		}
 		return inputStates;
 	}
@@ -626,5 +641,6 @@ public class BlockLogicGateMain : BlockPowered
 		Renderer rend =_obj.GetComponentInChildren<Renderer>();
 		rend.material.SetColor("_Emission", color);
 	}
+	
 	
 }
