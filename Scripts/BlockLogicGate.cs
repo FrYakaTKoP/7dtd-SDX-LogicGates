@@ -135,7 +135,7 @@ public class BlockLogicGateMain : BlockPowered
 	// 
 	private bool XR(WorldBase _world, int _cIdx, Vector3i _blockPos, BlockValue _blockValue)
 	{
-        DebugMsg("XR");
+        //DebugMsg("XR");
 		ChunkCluster chunkCluster = _world.ChunkClusters[_cIdx];
 		if (chunkCluster == null)
 		{
@@ -156,17 +156,7 @@ public class BlockLogicGateMain : BlockPowered
 		DebugMsg(String.Concat("XR BlockMetaPowered=", BlockIsPowered  ? "1" : "0"));
 		DebugMsg(String.Concat("XR BlockMetaTriggered=", BlockIsTriggered  ? "1" : "0"));
 		DebugMsg(String.Concat("XR outputMode=", outputMode  ? "1" : "0"));
-
-		DebugMsg(String.Concat("XR _blockValue.rotation=", _blockValue.rotation));
-		
-        bool flagOnBlockActivated = false; // this disables toggle
-		if (flagOnBlockActivated)
-		{
-			BlockIsTriggered = !BlockIsTriggered;
-			_blockValue.meta = (byte)(((int)_blockValue.meta & -3) | ((!BlockIsTriggered) ? 0 : 2));
-			_blockValue.meta = (byte)(((int)_blockValue.meta & -2) | ((!BlockIsPowered) ? 0 : 1));
-			_world.SetBlockRPC(_cIdx, _blockPos, _blockValue);
-		}		
+		DebugMsg(String.Concat("XR _blockValue.rotation=", _blockValue.rotation));		
 
 		TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
 		if (tileEntityPoweredTrigger != null)
@@ -200,7 +190,7 @@ public class BlockLogicGateMain : BlockPowered
 	
 	private void UpdateIndicators(BlockEntityData _ebcd, bool[] inputStates, bool BlockIsPowered, bool BlockIsTriggered, bool outputMode)
 	{
-        DebugMsg("UpdateIndicators");
+        //DebugMsg("UpdateIndicators");
 		GameObject IndicatorsObj = _ebcd.transform.Find("Indicators").gameObject;			
 
 		if(IndicatorsObj == null)
@@ -415,13 +405,13 @@ public class BlockLogicGateMain : BlockPowered
 		bool[] inputStates = {false, false, false};
 		for(int i=0; i < locations.Length; i++)
 		{	
-			DebugMsg(String.Concat("GetInputStates newInputRow=", i));
+			// DebugMsg(String.Concat("GetInputStates newInputRow=", i));
 			int nonGateBlocks = 0;
 			for(int x=0; x < 3; x++)
 			{				
 				BlockValue inputBlockValue = _world.GetBlock(locations[i][x]);
 				Type inputBlockType = Block.list[inputBlockValue.type].GetType();
-				DebugMsg(String.Concat("GetInputStates type=", inputBlockType.ToString()));
+				// DebugMsg(String.Concat("GetInputStates type=", inputBlockType.ToString()));
 				if(inputBlockType == typeof(BlockLogicGateInput))
 				{
 					TileEntityPoweredBlock _te = (TileEntityPoweredBlock)_world.GetTileEntity(_cIdx, locations[i][x]);
@@ -453,7 +443,7 @@ public class BlockLogicGateMain : BlockPowered
 			{
 				inputStates[i] =  true;	
 			}
-			DebugMsg(String.Concat("GetInputStates inputRow=",  inputStates[i] ? "1" : "0"));
+			// DebugMsg(String.Concat("GetInputStates inputRow=",  inputStates[i] ? "1" : "0"));
 		}
 		return inputStates;
 	}
@@ -469,7 +459,7 @@ public class BlockLogicGateMain : BlockPowered
 
 	public override bool ActivateBlock(WorldBase _world, int _cIdx, Vector3i _blockPos, BlockValue _blockValue, bool outputStateOld, bool isPowered)
 	{
-        DebugMsg("ActivateBlock");
+       // DebugMsg("ActivateBlock");
 		bool outputStateRaw = false;
 		bool outputStateNew = false;
 		bool[] inputStates = GetInputStates(_world, _cIdx, _blockPos, _blockValue);
@@ -486,8 +476,7 @@ public class BlockLogicGateMain : BlockPowered
 		DebugMsg(String.Concat("ActivateBlock outputStateOld=", outputStateOld ? "1" : "0"));
 		DebugMsg(String.Concat("ActivateBlock inputStates=", string.Join("", inputStates.Select(b => b ? "1" : "0").ToArray())));
 		DebugMsg(String.Concat("ActivateBlock outputMode=", outputMode ? "1" : "0"));
-		
-
+			
 		bool inputOn = true;
 		for(int i = 0; i < inputStates.Length; i++)
         if (!inputStates[i]) {
@@ -495,7 +484,9 @@ public class BlockLogicGateMain : BlockPowered
             break;
         }
 		
-		if(inputOn && isPowered){
+		//if(inputOn && isPowered)
+		if(inputOn)
+		{
 			outputStateRaw = true;
 		}
 		else
@@ -524,11 +515,12 @@ public class BlockLogicGateMain : BlockPowered
 				tileEntityPoweredTrigger.IsTriggered = outputStateNew; //tileEntityPoweredTrigger.
 				DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.IsTriggered=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
 			}
-			_blockValue.meta = setBoolBit(_blockValue.meta, 1, outputStateNew); //(byte)(((int)_blockValue.meta & -3) | ((!outputStateNew) ? 0 : 2));
+			_blockValue.meta = setBoolBit(_blockValue.meta, metaIndexTriggered, outputStateNew); 
 
 		//}
 		
-		_blockValue.meta = setBoolBit(_blockValue.meta, 0, isPowered); //(byte)(((int)_blockValue.meta & -2) | ((!isPowered) ? 0 : 1));
+		
+		_blockValue.meta = setBoolBit(_blockValue.meta, metaIndexPowered, (isPowered)); 
 		_world.SetBlockRPC(_cIdx, _blockPos, _blockValue);		
 		this.XR(_world, _cIdx, _blockPos, _blockValue);
 		return true;
@@ -536,7 +528,7 @@ public class BlockLogicGateMain : BlockPowered
 
 	public override void OnBlockValueChanged(WorldBase _world, int _clrIdx, Vector3i _blockPos, BlockValue _oldBlockValue, BlockValue _newBlockValue)
 	{
-        DebugMsg("OnBlockValueChanged");
+        //DebugMsg("OnBlockValueChanged");
 		base.OnBlockValueChanged(_world, _clrIdx, _blockPos, _oldBlockValue, _newBlockValue);
 		//this.XR(_world, _clrIdx, _blockPos, _newBlockValue);
 		BlockEntityData _ebcd = ((World)_world).ChunkClusters[_clrIdx].GetBlockEntity(_blockPos);

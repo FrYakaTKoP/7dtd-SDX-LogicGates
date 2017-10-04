@@ -202,42 +202,42 @@ public class BlockLogicGateInput : BlockPowered
 		
 		DebugMsg(String.Concat("ActivateBlock BlockmetaisToggled=", BlockIsToggled ? "true" : "false"));
 		
-		// BlockEntityData _ebcd = ((World)_world).ChunkClusters[_cIdx].GetBlockEntity(_blockPos);
-		// if (_ebcd != null && _ebcd.transform != null && _ebcd.transform.gameObject != null)
-		// {	
-			// foreach( Transform trans in _ebcd.transform) 
-			// {
-				// DebugMsg(String.Concat("ActivateBlock parent.transform.name=", trans.name ));
-			// }				
+		BlockEntityData _ebcd = ((World)_world).ChunkClusters[_cIdx].GetBlockEntity(_blockPos);
+		if (_ebcd != null && _ebcd.transform != null && _ebcd.transform.gameObject != null)
+		{	
+			foreach( Transform trans in _ebcd.transform) 
+			{
+				DebugMsg(String.Concat("ActivateBlock parent.transform.name=", trans.name ));
+			}				
 
-			//  //GameObject positionObj =  _ebcd.transform.Find("Position").gameObject;
-			// GameObject wireOffsetObj = _ebcd.transform.Find("WireOffset").gameObject;	
-			// Color tempColor = Color.black;
+			 //GameObject positionObj =  _ebcd.transform.Find("Position").gameObject;
+			GameObject wireOffsetObj = _ebcd.transform.Find("WireOffset").gameObject;	
+			Color tempColor = Color.black;
 						
-			// if (isPowered)
-			// {
+			if (isPowered)
+			{
 				// if(BlockIsToggled)
 				// {
-					// tempColor = Color.yellow;
+					tempColor = Color.green;
 				// }
 				// else
 				// {
 					// tempColor = Color.black;
 				// }
-			// }
-			// else
-			// {
+			}
+			else
+			{
 				// if(BlockIsToggled)
 				// {
-					// tempColor = Color.black;
+					tempColor = Color.black;
 				// }
 				// else
 				// {
 					// tempColor = Color.yellow;
 				// }
-			// }
-			// AddGlow(wireOffsetObj, tempColor, 1, 1);
-		// }
+			}
+			AddGlow(wireOffsetObj, tempColor, 1, 1);
+		}
 		
         
 		_blockValue.meta = (byte)(((int)_blockValue.meta & -3) | ((!isOn) ? 0 : 2));
@@ -246,6 +246,50 @@ public class BlockLogicGateInput : BlockPowered
 		return true;
 	}
 	
+	private void AddGlow(GameObject _obj, Color color, int range, int intensity)
+	{
+				
+		Renderer rend =_obj.GetComponentInChildren<Renderer>();
+		
+		// string[] kws = rend.material.shaderKeywords;
+		// foreach ( string keyword in kws)
+		// {
+			// DebugMsg(String.Concat("AddGlow renderer.material. keyword:", keyword)); 
+		// }
+		
+		// DebugMsg(String.Concat("AddGlow renderer.material.name=", rend.material.name ));
+		// DebugMsg(String.Concat("AddGlow renderer.material.shader.name=", rend.material.shader.name ));		
+		//DebugMsg(String.Concat("AddGlow renderer.material. hasProp:_EmissionColor=", rend.material.HasProperty("_EmissionColor") ? "1" : "0" )); // true
+		//DebugMsg(String.Concat("AddGlow renderer.material. hasProp:_Color=", rend.material.HasProperty("_Color") ? "1" : "0" )); // true
+		//DebugMsg(String.Concat("AddGlow renderer.material. hasProp:_SpecColor=", rend.material.HasProperty("_SpecColor") ? "1" : "0" )); // true
+		
+		//rend.material.color =  color;
+		//rend.material.EnableKeyword("_EMISSION");
+		//rend.material.SetColor("_Emission", color);
+		//rend.material.SetColor("_Color", color);
+		//rend.material.color = color;
+		
+		Light li =_obj.GetComponentInChildren<Light>();
+		if(li == null )
+		{
+			li = _obj.AddComponent<Light>();
+
+		}
+		if(color == Color.black)
+		{		
+			li.enabled = false;
+		}
+		else
+		{
+			li.range = range;
+			li.intensity = intensity;
+			li.color = color;				
+			li.enabled = true;
+		}
+		
+
+
+}
 	
 
 	public override TileEntityPowered CreateTileEntity(Chunk chunk)
