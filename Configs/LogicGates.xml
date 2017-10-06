@@ -11,7 +11,7 @@
 				<property name="OnlySimpleRotations" value="true"/>
 				<!-- <property name="Place" value="Door"/> -->
 				<!-- <property name="PlaceEverywhere" value="false"/>  -->
-				<property name="TakeDelay" value="5" />
+				<property name="TakeDelay" value="1" />
 				<property name="AllowRemotePower" value="false" />
 				<property name="EconomicValue" value="48" />
 			</block>
@@ -21,6 +21,7 @@
 				<property name="Extends" value="electricwirerelay" />
 				<property name="RequiredPower" value="0" />			
 				<property name="CustomIcon" value="electricwirerelay" />
+				<property name="TakeDelay" value="1" />
 			</block>
 		<!--
 			<block id="2044" name="logicGateOutput">

@@ -9,11 +9,11 @@ using System.Diagnostics;
 
 public class BlockLogicGateMain : BlockPowered
 {	
-    private static bool showDebugLog = true;
 	private int metaIndexPowered = 0;
 	private int metaIndexTriggered = 1;
 	private int metaIndexOutMode = 2;
 	
+    private static bool showDebugLog = true;
 	public static void DebugMsg(string msg)
 	{
 		if(showDebugLog)
@@ -511,13 +511,13 @@ public class BlockLogicGateMain : BlockPowered
 		if (tileEntityPoweredTrigger != null)
 		{
 			// DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.Property2=", tileEntityPoweredTrigger.Property2));
-			// byte triggerType = 1; 
-			// if(tileEntityPoweredTrigger.Property2 != triggerType)
-			// {
-				// tileEntityPoweredTrigger.Property2 = triggerType;
-			// }
+			byte triggerType = 1; 
+			if(tileEntityPoweredTrigger.Property2 != triggerType)
+			{
+				tileEntityPoweredTrigger.Property2 = triggerType;
+			}
 			
-			// tileEntityPoweredTrigger.IsTriggered = outputStateNew; //tileEntityPoweredTrigger.
+			tileEntityPoweredTrigger.IsTriggered = outputStateNew; //tileEntityPoweredTrigger.
 			DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.IsTriggered=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
 		}
 		
@@ -615,7 +615,7 @@ public class BlockLogicGateMain : BlockPowered
 		*/
 	}
 	
-/*
+
 	// BlockPressurePlate
     public override void OnBlockAdded(WorldBase _world, Chunk _chunk, Vector3i _blockPos, BlockValue _blockValue)
     {
@@ -632,7 +632,7 @@ public class BlockLogicGateMain : BlockPowered
             _chunk.AddTileEntity(tileEntityPowered);
         }
     }
-*/
+
 	
 	private void SetIndicatorColor(GameObject _obj, Color color)
 	{
