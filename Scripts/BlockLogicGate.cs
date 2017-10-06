@@ -13,7 +13,7 @@ public class BlockLogicGateMain : BlockPowered
 	private int metaIndexPowered = 0;
 	private int metaIndexTriggered = 1;
 	private int metaIndexOutMode = 2;
-
+	
 	public static void DebugMsg(string msg)
 	{
 		if(showDebugLog)
@@ -505,21 +505,24 @@ public class BlockLogicGateMain : BlockPowered
 		}
 		DebugMsg(String.Concat("ActivateBlock outputStateNew=", outputStateNew ? "1" : "0"));		
 		
-		//if(outputStateOld != outputStateNew)
-		//{
+
 				
-			TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
-			if (tileEntityPoweredTrigger != null)
-			{
-
-				tileEntityPoweredTrigger.IsTriggered = outputStateNew; //tileEntityPoweredTrigger.
-				DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.IsTriggered=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
-			}
-			_blockValue.meta = setBoolBit(_blockValue.meta, metaIndexTriggered, outputStateNew); 
-
-		//}
+		TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
+		if (tileEntityPoweredTrigger != null)
+		{
+			// DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.Property2=", tileEntityPoweredTrigger.Property2));
+			// byte triggerType = 1; 
+			// if(tileEntityPoweredTrigger.Property2 != triggerType)
+			// {
+				// tileEntityPoweredTrigger.Property2 = triggerType;
+			// }
+			
+			// tileEntityPoweredTrigger.IsTriggered = outputStateNew; //tileEntityPoweredTrigger.
+			DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.IsTriggered=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
+		}
 		
-		
+
+		_blockValue.meta = setBoolBit(_blockValue.meta, metaIndexTriggered, outputStateNew); 		
 		_blockValue.meta = setBoolBit(_blockValue.meta, metaIndexPowered, (isPowered)); 
 		_world.SetBlockRPC(_cIdx, _blockPos, _blockValue);		
 		this.XR(_world, _cIdx, _blockPos, _blockValue);
@@ -547,11 +550,14 @@ public class BlockLogicGateMain : BlockPowered
 	public override TileEntityPowered CreateTileEntity(Chunk chunk)
 	{
 		DebugMsg("CreateTileEntity");
-		return new TileEntityPoweredTrigger(chunk)
+		TileEntityPoweredTrigger te = new TileEntityPoweredTrigger(chunk)
 		{
-			TriggerType = PowerTrigger.TriggerTypes.Switch
-			//TriggerType = PowerTrigger.TriggerTypes.TripWire
+			// TriggerType = PowerTrigger.TriggerTypes.Switch
+			TriggerType = PowerTrigger.TriggerTypes.PressurePlate			
 		};
+		//te.Property2 = 0; // nullRef
+		
+		return te;
     } 
 
 	public static bool IsSwitchOn(byte _metadata)
