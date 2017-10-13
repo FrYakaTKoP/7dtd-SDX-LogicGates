@@ -157,19 +157,17 @@ public class BlockLogicGateMain : BlockPowered
 		DebugMsg(String.Concat("XR BlockMetaTriggered=", BlockIsTriggered  ? "1" : "0"));
 		DebugMsg(String.Concat("XR outputMode=", outputMode  ? "1" : "0"));
 		DebugMsg(String.Concat("XR _blockValue.rotation=", _blockValue.rotation));		
-
-		TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
-		if (tileEntityPoweredTrigger != null)
-		{	
-			DebugMsg(String.Concat("XR -> tEPT.IsTriggered1=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
-			// if (Steam.Network.IsServer)
-			// {
-				
-				// tileEntityPoweredTrigger.IsTriggered = BlockIsTriggered
-				
-			// }			
-			//DebugMsg(String.Concat("XR -> tEPT.IsTriggered2=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
-		}
+		
+		if (Steam.Network.IsServer)
+		{
+			TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
+			if (tileEntityPoweredTrigger != null)
+			{	
+				DebugMsg(String.Concat("XR -> tEPT.IsTriggered1=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));					
+				tileEntityPoweredTrigger.IsTriggered = BlockIsTriggered;						
+				DebugMsg(String.Concat("XR -> tEPT.IsTriggered2=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
+			}
+		}	
 		
 		/* 		
 			TileEntityPowered tileEntityPowered = _world.GetTileEntity(_cIdx, _blockPos) as TileEntityPowered;
@@ -216,7 +214,7 @@ public class BlockLogicGateMain : BlockPowered
 						tempColor = Color.black;								
 					}	
 				}
-				if(Indicator.name == "IndInput0")
+				if(Indicator.name == "IndInputA")
 				{
 					if (inputStates[0])
 					{
@@ -234,7 +232,7 @@ public class BlockLogicGateMain : BlockPowered
 						tempColor = Color.black;								
 					}	
 				}
-				if(Indicator.name == "IndInput1")
+				if(Indicator.name == "IndInputB")
 				{
 					if (inputStates[1])
 					{
@@ -252,7 +250,25 @@ public class BlockLogicGateMain : BlockPowered
 						tempColor = Color.black;								
 					}						
 				}
-				if(Indicator.name == "IndInput2")
+				if(Indicator.name == "IndInputC")
+				{
+					if (inputStates[2])
+					{
+						if(inputStates[0] && inputStates[1])
+						{
+							tempColor = Color.green;
+						}
+						else
+						{
+							tempColor = Color.yellow;	
+						}
+					}
+					else
+					{
+						tempColor = Color.black;								
+					}					
+				}
+				if(Indicator.name == "IndInputD")
 				{
 					if (inputStates[2])
 					{
@@ -507,19 +523,19 @@ public class BlockLogicGateMain : BlockPowered
 		
 
 				
-		TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
-		if (tileEntityPoweredTrigger != null)
-		{
-			// DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.Property2=", tileEntityPoweredTrigger.Property2));
-			byte triggerType = 1; 
-			if(tileEntityPoweredTrigger.Property2 != triggerType)
-			{
-				tileEntityPoweredTrigger.Property2 = triggerType;
-			}
+		// TileEntityPoweredTrigger tileEntityPoweredTrigger = _world.GetTileEntity(_cIdx, _blockPos) as 	TileEntityPoweredTrigger;
+		// if (tileEntityPoweredTrigger != null)
+		// {
+			//DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.Property2=", tileEntityPoweredTrigger.Property2));
+			// byte triggerType = 1; 
+			// if(tileEntityPoweredTrigger.Property2 != triggerType)
+			// {
+				// tileEntityPoweredTrigger.Property2 = triggerType;
+			// }
 			
-			tileEntityPoweredTrigger.IsTriggered = outputStateNew; //tileEntityPoweredTrigger.
-			DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.IsTriggered=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
-		}
+			// tileEntityPoweredTrigger.IsTriggered = outputStateNew; //tileEntityPoweredTrigger.
+			// DebugMsg(String.Concat("ActivateBlock tileEntityPoweredTrigger.IsTriggered=", tileEntityPoweredTrigger.IsTriggered ? "1" : "0"));
+		// }
 		
 
 		_blockValue.meta = setBoolBit(_blockValue.meta, metaIndexTriggered, outputStateNew); 		
@@ -552,10 +568,10 @@ public class BlockLogicGateMain : BlockPowered
 		DebugMsg("CreateTileEntity");
 		TileEntityPoweredTrigger te = new TileEntityPoweredTrigger(chunk)
 		{
-			// TriggerType = PowerTrigger.TriggerTypes.Switch
-			TriggerType = PowerTrigger.TriggerTypes.PressurePlate			
+			TriggerType = PowerTrigger.TriggerTypes.Switch
+			//TriggerType = PowerTrigger.TriggerTypes.PressurePlate,
+			// //te.Property2 = 1		
 		};
-		//te.Property2 = 0; // nullRef
 		
 		return te;
     } 
